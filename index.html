@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0d0d0d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>IRON LOG</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #141414;
+    --bg3: #1e1e1e;
+    --card: #1a1a1a;
+    --border: #2a2a2a;
+    --accent: #e8ff3c;
+    --accent-glow: rgba(232,255,60,0.4);
+    --accent-glow2: rgba(232,255,60,0.3);
+    --accent-glow3: rgba(232,255,60,0.25);
+    --accent-tint: rgba(232,255,60,0.12);
+    --accent-tint2: rgba(232,255,60,0.1);
+    --accent-tint3: rgba(232,255,60,0.08);
+    --accent-tint4: rgba(232,255,60,0.04);
+    --accent-border: rgba(232,255,60,0.3);
+    --accent-border2: rgba(232,255,60,0.25);
+    --accent-border3: rgba(232,255,60,0.2);
+    --accent2: #ff4c4c;
+    --text: #f0f0f0;
+    --text2: #888;
+    --text3: #555;
+    --radius: 16px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 20px);
+  }
+
+  /* ── LIGHT MODE ── */
+  body.light {
+    --bg: #f5f5f5;
+    --bg2: #ffffff;
+    --bg3: #ebebeb;
+    --card: #ffffff;
+    --border: #dedede;
+    --text: #111111;
+    --text2: #666666;
+    --text3: #aaaaaa;
+  }
+  body.light .topbar { background: var(--bg); }
+  body.light .bottom-nav { background: var(--bg2); }
+  body.light .overlay { background: rgba(0,0,0,0.55); }
+  body.light .sheet { background: var(--bg2); }
+  body.light .form-input { background: var(--bg3); color: var(--text); }
+  body.light .set-mini-input,
+  body.light .set-comment-input { background: var(--bg); }
+  body.light .autocomplete-list { background: var(--bg2); }
+  body.light .autocomplete-item:active,
+  body.light .autocomplete-item.highlighted { background: var(--bg3); }
+  body.light select.form-input { background-color: var(--bg3); }
+
+  /* ── OPTIONS SCREEN ── */
+  .options-list { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .options-row {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; transition: border-color 0.2s, transform 0.12s;
+  }
+  .options-row:active { transform: scale(0.98); border-color: var(--accent); }
+  .options-row-label { font-size: 15px; font-weight: 500; }
+  .options-row-arrow { font-size: 18px; color: var(--text3); }
+
+  /* ── DISPLAY OPTIONS PAGE ── */
+  .display-section { padding: 20px 20px 8px; }
+  .display-section-title {
+    font-size: 11px; font-weight: 700; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+  }
+  .theme-toggle {
+    display: flex; gap: 8px; margin-bottom: 4px;
+  }
+  .theme-btn {
+    flex: 1; padding: 14px 10px; border-radius: 14px; text-align: center;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; border: 2px solid var(--border);
+    background: var(--bg3); color: var(--text2);
+    transition: all 0.2s;
+  }
+  .theme-btn.active {
+    border-color: var(--accent); color: var(--accent);
+    background: var(--accent-tint2);
+  }
+  .color-palette {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  }
+  .color-swatch {
+    border-radius: 14px; padding: 14px 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    cursor: pointer; border: 2px solid var(--border);
+    background: var(--bg3); transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+    color: var(--text2);
+  }
+  .color-swatch:active { transform: scale(0.95); }
+  .color-swatch.active { border-color: var(--accent); color: var(--text); }
+  .swatch-circle {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 3px solid transparent;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .color-swatch.active .swatch-circle { border-color: var(--text); transform: scale(1.12); }
+
+  /* ── OPTIONS BACK BUTTON ── */
+  .topbar-back {
+    background: none; border: none; color: var(--text2);
+    font-size: 22px; cursor: pointer; padding: 4px 8px 4px 0;
+    display: flex; align-items: center;
+  }
+  .topbar-options-btn {
+    background: none; border: none; color: var(--text2);
+    font-size: 22px; cursor: pointer; padding: 4px;
+    transition: color 0.2s;
+  }
+  .topbar-options-btn:active { color: var(--accent); }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; }
+  
+  /* ── APP SHELL ── */
+  #app { height: 100%; display: flex; flex-direction: column; }
+  
+  .screen { 
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    padding-bottom: calc(70px + var(--safe-bottom));
+    display: none; flex-direction: column;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen.active { display: flex; }
+  
+  /* ── TOP BAR ── */
+  .topbar {
+    padding: calc(var(--safe-top) + 18px) 20px 14px;
+    background: var(--bg);
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; color: var(--text); }
+  .topbar-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: calc(60px + var(--safe-bottom));
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: flex-start; justify-content: space-around;
+    padding-top: 6px;
+    z-index: 100;
+  }
+  .nav-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    background: none; border: none; cursor: pointer;
+    padding: 6px 20px; color: var(--text3);
+    font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-btn.active { color: var(--accent); }
+  .nav-icon { font-size: 20px; line-height: 1; }
+
+  /* ── FAB ── */
+  .fab {
+    position: fixed; bottom: calc(76px + var(--safe-bottom)); right: 20px;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--accent); color: #000;
+    border: none; font-size: 28px; font-weight: 300;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 90;
+    box-shadow: 0 4px 20px var(--accent-glow);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .fab:active { transform: scale(0.92); box-shadow: 0 2px 10px var(--accent-glow2); }
+
+  /* ── HOME SCREEN ── */
+  .empty-state {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 12px;
+    padding: 40px 24px;
+  }
+  .empty-icon { font-size: 64px; opacity: 0.15; }
+  .empty-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 1px; color: var(--text2); }
+  .empty-sub { font-size: 13px; color: var(--text3); text-align: center; line-height: 1.5; }
+
+  .sessions-list { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .session-card {
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+    active: { transform: scale(0.98); }
+  }
+  .session-card:active { transform: scale(0.98); border-color: var(--accent); }
+  .session-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .session-date { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; }
+  .session-badge {
+    background: var(--accent-tint); color: var(--accent);
+    font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px;
+  }
+  .session-meta { margin-top: 8px; display: flex; gap: 12px; }
+  .session-meta-item { font-size: 12px; color: var(--text2); }
+  .session-exos { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .exo-chip {
+    background: var(--bg3); border-radius: 8px;
+    font-size: 11px; color: var(--text2); padding: 4px 10px;
+  }
+
+  /* ── MODAL / OVERLAY ── */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    z-index: 200; display: flex; flex-direction: column;
+    justify-content: flex-end;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .overlay.open { opacity: 1; pointer-events: all; }
+  .sheet {
+    background: var(--bg2); border-radius: 24px 24px 0 0;
+    max-height: 92vh; overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+    padding-bottom: var(--safe-bottom);
+  }
+  .overlay.open .sheet { transform: translateY(0); }
+  .sheet-handle { width: 40px; height: 4px; border-radius: 2px; background: var(--border); margin: 12px auto 20px; }
+  .sheet-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 1px; padding: 0 20px 16px; }
+
+  /* ── FORMS ── */
+  .form-group { padding: 0 20px; margin-bottom: 14px; }
+  .form-label { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; display: block; }
+  .form-input {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 12px; padding: 13px 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text);
+    outline: none; transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 20px; margin-bottom: 14px; }
+
+  .btn {
+    border: none; border-radius: 14px; padding: 14px 20px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: transform 0.15s, opacity 0.15s;
+    width: calc(100% - 40px); margin: 0 20px;
+  }
+  .btn:active { transform: scale(0.97); opacity: 0.85; }
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); margin-top: 8px; }
+  .btn-danger { background: rgba(255,76,76,0.15); color: var(--accent2); border: 1px solid rgba(255,76,76,0.2); margin-top: 8px; }
+
+  /* ── EXERCISES LIST IN SESSION ── */
+  .exo-list { padding: 0 20px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .exo-item {
+    background: var(--bg3); border-radius: 12px; border: 1px solid var(--border);
+    padding: 12px 14px;
+  }
+  .exo-item-header { display: flex; justify-content: space-between; align-items: center; }
+  .exo-item-name { font-size: 14px; font-weight: 500; }
+  .exo-item-detail { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .exo-item-del { background: none; border: none; color: var(--text3); font-size: 18px; cursor: pointer; padding: 4px; }
+  .exo-item-sets { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+  .exo-item-set-row { font-size: 12px; color: var(--text2); padding: 4px 8px; background: var(--bg2); border-radius: 7px; }
+  .exo-item-set-row .set-comment { font-style: italic; color: var(--text3); margin-top: 1px; }
+
+  /* ── PER-SET BUILDER ── */
+  .set-builder { padding: 0 20px; margin-bottom: 4px; display: flex; flex-direction: column; gap: 8px; }
+  .set-builder-row {
+    background: var(--bg3); border-radius: 12px; border: 1px solid var(--border);
+    padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .set-builder-row-top { display: flex; align-items: center; gap: 8px; }
+  .set-num { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--accent); min-width: 28px; }
+  .set-mini-input {
+    flex: 1; background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text);
+    outline: none; transition: border-color 0.2s; -webkit-appearance: none;
+    min-width: 0;
+  }
+  .set-mini-input:focus { border-color: var(--accent); }
+  .set-mini-input::placeholder { color: var(--text3); font-size: 12px; }
+  .set-comment-input {
+    width: 100%; background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 7px 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text2);
+    outline: none; transition: border-color 0.2s; -webkit-appearance: none;
+    font-style: italic;
+  }
+  .set-comment-input:focus { border-color: var(--border); }
+  .set-comment-input::placeholder { color: var(--text3); }
+  .set-del-btn { background: none; border: none; color: var(--text3); font-size: 16px; cursor: pointer; padding: 2px 4px; flex-shrink: 0; }
+
+  /* ── ADD SET BOTTOM BUTTON ── */
+  .btn-add-set-bottom {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin: 10px 20px 16px; padding: 18px 20px;
+    background: var(--accent-tint4); border: 2px dashed var(--accent-border);
+    border-radius: 14px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700;
+    color: var(--accent); letter-spacing: 0.3px;
+    transition: border-color 0.2s, background 0.2s, transform 0.12s;
+    width: calc(100% - 40px);
+  }
+  .btn-add-set-bottom:active { background: rgba(232,255,60,0.1); border-color: var(--accent); transform: scale(0.98); }
+  .btn-add-set-bottom .plus-icon { font-size: 22px; line-height: 1; }
+
+  /* ── AUTOCOMPLETE ── */
+  .exo-name-wrap { position: relative; }
+  .autocomplete-list {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 50;
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    max-height: 180px; overflow-y: auto;
+  }
+  .autocomplete-item {
+    padding: 12px 14px; font-size: 14px; color: var(--text2); cursor: pointer;
+    border-bottom: 1px solid var(--border); transition: background 0.15s;
+  }
+  .autocomplete-item:last-child { border-bottom: none; }
+  .autocomplete-item:active, .autocomplete-item.highlighted { background: var(--bg3); color: var(--text); }
+  .autocomplete-item mark { background: none; color: var(--accent); font-weight: 700; }
+  .autocomplete-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .autocomplete-chip {
+    background: var(--accent-tint2); border: 1px solid var(--accent-border3);
+    color: var(--accent); font-size: 12px; font-weight: 600;
+    padding: 5px 12px; border-radius: 20px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .autocomplete-chip:active { background: rgba(232,255,60,0.25); }
+
+  /* ── MONTH GROUP ACCORDION ── */
+  .month-group { margin-bottom: 4px; }
+  .month-group-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px 8px;
+    cursor: pointer; user-select: none;
+  }
+  .month-group-label {
+    font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1.5px;
+    color: var(--text3); text-transform: uppercase;
+  }
+  .month-group-meta { font-size: 11px; color: var(--text3); }
+  .month-group-arrow {
+    font-size: 14px; color: var(--text3);
+    transition: transform 0.25s; display: inline-block;
+  }
+  .month-group.collapsed .month-group-arrow { transform: rotate(-90deg); }
+  .month-group-body { display: flex; flex-direction: column; gap: 8px; padding: 0 16px 8px; }
+  .month-group.collapsed .month-group-body { display: none; }
+
+  /* ── COLLAPSIBLE DETAIL EXO ── */
+  .detail-exo-item { cursor: pointer; }
+  .detail-exo-item .detail-exo-sets { overflow: hidden; }
+  .detail-exo-item.collapsed .detail-exo-sets { display: none; }
+  .detail-exo-summary {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .detail-exo-maxweight {
+    font-size: 12px; color: var(--accent); font-weight: 600;
+    background: var(--accent-tint); border-radius: 8px; padding: 2px 8px;
+  }
+  .detail-exo-arrow {
+    font-size: 12px; color: var(--text3); margin-left: 6px;
+    transition: transform 0.2s; display: inline-block;
+  }
+  .detail-exo-item.collapsed .detail-exo-arrow { transform: rotate(-90deg); }
+  .section-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; padding: 0 20px; margin-bottom: 10px; }
+
+  /* ── CALENDAR ── */
+  .calendar-wrap { padding: 16px; }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .cal-month { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 1px; }
+  .cal-nav { background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-radius: 10px; width: 36px; height: 36px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-day-name { text-align: center; font-size: 11px; font-weight: 600; color: var(--text3); padding: 4px 0; }
+  .cal-day {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; font-size: 13px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .cal-day.empty { pointer-events: none; }
+  .cal-day.today { border: 1px solid var(--accent); color: var(--accent); font-weight: 600; }
+  .cal-day.has-session { background: var(--accent-tint); color: var(--accent); font-weight: 700; }
+  .cal-day.has-session.today { background: var(--accent); color: #000; }
+  .cal-day:not(.empty):active { background: var(--bg3); }
+  
+  /* ── STATS ── */
+  .stats-wrap { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+  .stats-controls { display: flex; flex-direction: column; gap: 10px; }
+  .stats-tabs { display: flex; gap: 6px; }
+  .stats-tab {
+    flex: 1; padding: 10px; border-radius: 10px; text-align: center;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    background: var(--bg3); color: var(--text2); border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .stats-tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
+  
+  select.form-input { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  
+  .chart-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 18px; }
+  .chart-title { font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; }
+  .chart-area { height: 180px; position: relative; }
+  canvas { width: 100% !important; }
+  
+  .no-data { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; }
+
+  /* ── DETAIL SHEET ── */
+  .detail-exo-item {
+    background: var(--bg3); border-radius: 12px; border: 1px solid var(--border);
+    padding: 14px 16px; margin-bottom: 8px;
+  }
+  .detail-exo-name { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  .detail-exo-sets { display: flex; gap: 8px; flex-wrap: wrap; }
+  .set-badge {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 5px 10px; font-size: 12px; color: var(--text2);
+  }
+  .set-badge strong { color: var(--text); }
+
+  /* ── SCROLL BAR ── */
+  ::-webkit-scrollbar { width: 0; }
+  
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .session-card { animation: fadeIn 0.3s ease both; }
+
+  /* ── STATS PERIOD NAV ── */
+  .period-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .period-nav-label { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; text-align: center; flex: 1; }
+  .period-nav-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-radius: 10px; width: 36px; height: 36px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  /* ── DETAIL EDIT BUTTON ── */
+  .btn-edit { background: var(--accent-tint2); color: var(--accent); border: 1px solid var(--accent-border2); margin-top: 8px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ SCREEN: HOME ══ -->
+  <div class="screen active" id="screen-home">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" style="font-size:22px;letter-spacing:1px">Suivi d'entrainement</div>
+        <div class="topbar-sub">par Zhalost</div>
+        <div class="topbar-sub" id="home-sub" style="margin-top:1px"></div>
+      </div>
+      <button class="topbar-options-btn" onclick="showScreen('options')">⚙️</button>
+    </div>
+    <div id="home-content"></div>
+  </div>
+
+  <!-- ══ SCREEN: CALENDAR ══ -->
+  <div class="screen" id="screen-cal">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">CALENDRIER</div>
+        <div class="topbar-sub">Historique des entraînements</div>
+      </div>
+      <button class="topbar-options-btn" onclick="showScreen('options')">⚙️</button>
+    </div>
+    <div class="calendar-wrap">
+      <div class="cal-header">
+        <button class="cal-nav" id="cal-prev">‹</button>
+        <div class="cal-month" id="cal-month-label"></div>
+        <button class="cal-nav" id="cal-next">›</button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: STATS ══ -->
+  <div class="screen" id="screen-stats">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">ÉVOLUTION</div>
+        <div class="topbar-sub">Progression par exercice</div>
+      </div>
+      <button class="topbar-options-btn" onclick="showScreen('options')">⚙️</button>
+    </div>
+    <div class="stats-wrap">
+      <div class="stats-controls">
+        <div class="stats-tabs">
+          <div class="stats-tab active" data-period="monthly">Mensuel</div>
+          <div class="stats-tab" data-period="yearly">Annuel</div>
+        </div>
+        <div class="period-nav" id="stats-period-nav">
+          <button class="period-nav-btn" id="stats-period-prev">‹</button>
+          <div class="period-nav-label" id="stats-period-label"></div>
+          <button class="period-nav-btn" id="stats-period-next">›</button>
+        </div>
+        <select class="form-input" id="stats-exo-select" style="margin:0">
+          <option value="">— Choisir un exercice —</option>
+        </select>
+        <div class="stats-tabs">
+          <div class="stats-tab active" data-metric="weight">Poids (kg)</div>
+          <div class="stats-tab" data-metric="reps">Répétitions</div>
+        </div>
+      </div>
+      <div id="stats-chart-area"></div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: OPTIONS ══ -->
+  <div class="screen" id="screen-options">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="topbar-back" id="options-back">‹</button>
+        <div>
+          <div class="topbar-title">OPTIONS</div>
+          <div class="topbar-sub">Personnalisation</div>
+        </div>
+      </div>
+    </div>
+    <div class="options-list">
+      <div class="options-row" onclick="showScreen('display')">
+        <span class="options-row-label">🎨 Affichage</span>
+        <span class="options-row-arrow">›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: DISPLAY ══ -->
+  <div class="screen" id="screen-display">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="topbar-back" id="display-back">‹</button>
+        <div>
+          <div class="topbar-title">AFFICHAGE</div>
+          <div class="topbar-sub">Thème &amp; couleur</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="display-section">
+      <div class="display-section-title">Thème</div>
+      <div class="theme-toggle">
+        <div class="theme-btn" id="theme-dark" onclick="setTheme('dark')">🌙 Sombre</div>
+        <div class="theme-btn" id="theme-light" onclick="setTheme('light')">☀️ Clair</div>
+      </div>
+    </div>
+
+    <div class="display-section" style="padding-top:24px">
+      <div class="display-section-title">Couleur d'accentuation</div>
+      <div class="color-palette" id="color-palette">
+        <div class="color-swatch" data-color="default" onclick="setAccent('default')">
+          <div class="swatch-circle" style="background:#e8ff3c"></div>
+          <span>Jaune</span>
+        </div>
+        <div class="color-swatch" data-color="red" onclick="setAccent('red')">
+          <div class="swatch-circle" style="background:#FF0000"></div>
+          <span>Rouge</span>
+        </div>
+        <div class="color-swatch" data-color="green" onclick="setAccent('green')">
+          <div class="swatch-circle" style="background:#26FF00"></div>
+          <span>Vert</span>
+        </div>
+        <div class="color-swatch" data-color="blue" onclick="setAccent('blue')">
+          <div class="swatch-circle" style="background:#0040FF"></div>
+          <span>Bleu</span>
+        </div>
+        <div class="color-swatch" data-color="pink" onclick="setAccent('pink')">
+          <div class="swatch-circle" style="background:#FF00C8"></div>
+          <span>Rose</span>
+        </div>
+        <div class="color-swatch" data-color="purple" onclick="setAccent('purple')">
+          <div class="swatch-circle" style="background:#E100FF"></div>
+          <span>Violet</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BOTTOM NAV ══ -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-screen="home">
+      <span class="nav-icon">🏠</span>Accueil
+    </button>
+    <button class="nav-btn" data-screen="cal">
+      <span class="nav-icon">📅</span>Calendrier
+    </button>
+    <button class="nav-btn" data-screen="stats">
+      <span class="nav-icon">📈</span>Évolution
+    </button>
+  </nav>
+
+  <!-- FAB -->
+  <button class="fab" id="fab">＋</button>
+</div>
+
+<!-- ══ OVERLAY: NEW SESSION ══ -->
+<div class="overlay" id="overlay-new">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">NOUVELLE SÉANCE</div>
+    
+    <div class="form-group">
+      <label class="form-label">Date</label>
+      <input type="date" class="form-input" id="session-date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nom de la séance (optionnel)</label>
+      <input type="text" class="form-input" id="session-name" placeholder="ex: Push, Jambes, Full body...">
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Exercices ajoutés</div>
+    <div class="exo-list" id="new-exo-list">
+      <div style="padding:10px 0;text-align:center;color:var(--text3);font-size:13px;">Aucun exercice pour l'instant</div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Ajouter un exercice</div>
+
+    <div class="form-group" style="position:relative">
+      <label class="form-label">Nom de l'exercice</label>
+      <div class="exo-name-wrap">
+        <input type="text" class="form-input" id="exo-name" placeholder="ex: Développé couché, Squat..." autocomplete="off">
+        <div class="autocomplete-list" id="exo-autocomplete" style="display:none"></div>
+      </div>
+    </div>
+
+    <div style="padding: 0 20px; margin-bottom: 4px;">
+      <span class="form-label">Séries <span id="sets-count-label" style="color:var(--accent)">0</span></span>
+    </div>
+    <div class="set-builder" id="set-builder"></div>
+    <button class="btn-add-set-bottom" id="btn-add-set"><span class="plus-icon">＋</span> Ajouter une série</button>
+
+    <button class="btn btn-outline" id="btn-add-exo">＋ Ajouter cet exercice</button>
+    <div style="height:12px"></div>
+    <button class="btn btn-primary" id="btn-finish-session">✓ Terminer la séance</button>
+    <button class="btn btn-danger" id="btn-cancel-session">Annuler</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: SESSION DETAIL ══ -->
+<div class="overlay" id="overlay-detail">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="detail-title"></div>
+    <div style="padding: 0 20px 10px; display:flex; gap:10px; flex-wrap:wrap;" id="detail-badges"></div>
+    <div class="divider"></div>
+    <div class="section-label">Exercices</div>
+    <div style="padding: 0 20px 20px;" id="detail-exos"></div>
+    <button class="btn btn-edit" id="btn-edit-session">✏️ Modifier la séance</button>
+    <button class="btn btn-danger" id="btn-delete-session">🗑 Supprimer la séance</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: EDIT SESSION ══ -->
+<div class="overlay" id="overlay-edit">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">MODIFIER LA SÉANCE</div>
+
+    <div class="form-group">
+      <label class="form-label">Date</label>
+      <input type="date" class="form-input" id="edit-session-date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nom de la séance (optionnel)</label>
+      <input type="text" class="form-input" id="edit-session-name" placeholder="ex: Push, Jambes, Full body...">
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Exercices</div>
+    <div class="exo-list" id="edit-exo-list"></div>
+
+    <div class="divider"></div>
+    <div class="section-label">Ajouter un exercice</div>
+    <div class="form-group" style="position:relative">
+      <label class="form-label">Nom de l'exercice</label>
+      <div class="exo-name-wrap">
+        <input type="text" class="form-input" id="edit-exo-name" placeholder="ex: Développé couché, Squat..." autocomplete="off">
+        <div class="autocomplete-list" id="edit-exo-autocomplete" style="display:none"></div>
+      </div>
+    </div>
+    <div style="padding: 0 20px; margin-bottom: 4px;">
+      <span class="form-label">Séries <span id="edit-sets-count-label" style="color:var(--accent)">0</span></span>
+    </div>
+    <div class="set-builder" id="edit-set-builder"></div>
+    <button class="btn-add-set-bottom" id="edit-btn-add-set"><span class="plus-icon">＋</span> Ajouter une série</button>
+    <button class="btn btn-outline" id="edit-btn-add-exo">＋ Ajouter cet exercice</button>
+    <div style="height:12px"></div>
+    <button class="btn btn-primary" id="edit-btn-save">✓ Enregistrer les modifications</button>
+    <button class="btn btn-danger" id="edit-btn-cancel">Annuler</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════
+// DATA LAYER
+// ══════════════════════════════════
+const DB = {
+  KEY: 'ironlog_sessions',
+  load() {
+    try { return JSON.parse(localStorage.getItem(this.KEY)) || []; }
+    catch(e) { return []; }
+  },
+  save(data) { localStorage.setItem(this.KEY, JSON.stringify(data)); },
+  getSessions() { return this.load().sort((a,b) => b.date.localeCompare(a.date)); },
+  addSession(s) {
+    const all = this.load();
+    s.id = Date.now().toString();
+    all.push(s);
+    this.save(all);
+    return s;
+  },
+  updateSession(id, updated) {
+    const all = this.load();
+    const idx = all.findIndex(s => s.id === id);
+    if (idx !== -1) { all[idx] = { ...all[idx], ...updated }; this.save(all); }
+  },
+  deleteSession(id) {
+    const all = this.load().filter(s => s.id !== id);
+    this.save(all);
+  },
+  getAllExerciseNames() {
+    const names = new Set();
+    this.load().forEach(s => s.exercises.forEach(e => names.add(e.name)));
+    return [...names].sort();
+  }
+};
+
+// ══════════════════════════════════
+// STATE
+// ══════════════════════════════════
+let currentSession = { date: '', name: '', exercises: [] };
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+let statsPeriod = 'monthly';
+let statsMetric = 'weight';
+let statsExo = '';
+let detailSessionId = null;
+// Stats period navigation
+let statsNavYear = new Date().getFullYear();
+let statsNavMonth = new Date().getMonth();
+// Edit session state
+let editSession = null; // full session object being edited
+let editSets = [];      // current sets being built in edit form
+
+// ══════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+
+  const fab = document.getElementById('fab');
+  const nav = document.querySelector('.bottom-nav');
+  const isMain = ['home','cal','stats'].includes(id);
+
+  fab.style.display = id === 'home' ? 'flex' : 'none';
+  nav.style.display = isMain ? 'flex' : 'none';
+
+  if (isMain) {
+    document.querySelector(`.nav-btn[data-screen="${id}"]`).classList.add('active');
+  }
+
+  if (id === 'cal') renderCalendar();
+  if (id === 'stats') renderStats();
+  if (id === 'display') syncDisplayUI();
+}
+
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => showScreen(btn.dataset.screen));
+});
+
+// ══════════════════════════════════
+// HOME
+// ══════════════════════════════════
+function renderHome() {
+  const sessions = DB.getSessions(); // sorted desc
+  const content = document.getElementById('home-content');
+  const sub = document.getElementById('home-sub');
+
+  // Count unique training days
+  const uniqueDays = [...new Set(sessions.map(s => s.date))].length;
+  sub.textContent = uniqueDays === 0
+    ? ''
+    : `${uniqueDays} entraînement${uniqueDays > 1 ? 's' : ''} enregistré${uniqueDays > 1 ? 's' : ''}`;
+
+  if (sessions.length === 0) {
+    content.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🏋️</div>
+        <div class="empty-title" style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--text2)">Prêt à soulever ?</div>
+        <div class="empty-sub">Appuyez sur <strong style="color:var(--accent)">+</strong> pour ajouter votre première séance</div>
+      </div>`;
+    return;
+  }
+
+  // Merge sessions with the same date into one training day
+  const dayMap = {}; // date -> { date, ids:[], name, exercises:[] }
+  const dayOrder = [];
+  sessions.forEach(s => {
+    if (!dayMap[s.date]) {
+      dayMap[s.date] = { date: s.date, ids: [], name: s.name || '', exercises: [] };
+      dayOrder.push(s.date);
+    }
+    dayMap[s.date].ids.push(s.id);
+    dayMap[s.date].exercises.push(...s.exercises);
+    if (!dayMap[s.date].name && s.name) dayMap[s.date].name = s.name;
+  });
+  const days = dayOrder.map(d => dayMap[d]); // desc order preserved
+
+  // Group days by YYYY-MM
+  const monthMap = {};
+  const monthOrder = [];
+  days.forEach(day => {
+    const mk = day.date.slice(0, 7); // YYYY-MM
+    if (!monthMap[mk]) { monthMap[mk] = []; monthOrder.push(mk); }
+    monthMap[mk].push(day);
+  });
+
+  // Decide whether to use accordions: any month with > 3 sessions
+  const useAccordion = monthOrder.some(mk => monthMap[mk].length > 3);
+
+  let html = '';
+
+  if (!useAccordion) {
+    // Simple flat list (no month separators)
+    html += '<div class="sessions-list">';
+    days.forEach((day, i) => {
+      html += renderDayCard(day, i);
+    });
+    html += '</div>';
+  } else {
+    // Month accordion
+    monthOrder.forEach((mk, mi) => {
+      const [y, m] = mk.split('-');
+      const monthLabel = MONTHS_FR[parseInt(m) - 1] + ' ' + y;
+      const monthDays = monthMap[mk];
+      const isCollapsed = mi > 0; // first month open by default
+      html += `
+      <div class="month-group${isCollapsed ? ' collapsed' : ''}" id="mg-${mk}">
+        <div class="month-group-header" onclick="toggleMonthGroup('${mk}')">
+          <div>
+            <span class="month-group-label">${monthLabel}</span>
+            <span class="month-group-meta"> · ${monthDays.length} entraînement${monthDays.length>1?'s':''}</span>
+          </div>
+          <span class="month-group-arrow">▾</span>
+        </div>
+        <div class="month-group-body">
+          ${monthDays.map((day, i) => renderDayCard(day, i)).join('')}
+        </div>
+      </div>`;
+    });
+  }
+
+  content.innerHTML = html;
+}
+
+function renderDayCard(day, i) {
+  const d = new Date(day.date + 'T12:00:00');
+  const dateStr = d.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long' });
+  const exoNames = [...new Set(day.exercises.map(e => e.name))];
+  const chips = exoNames.slice(0, 4).map(n => `<span class="exo-chip">${n}</span>`).join('')
+    + (exoNames.length > 4 ? `<span class="exo-chip">+${exoNames.length - 4}</span>` : '');
+  // Use first session ID as the representative for detail/edit
+  const firstId = day.ids[0];
+  return `
+    <div class="session-card" style="animation-delay:${i*0.04}s" onclick="openDetailForDate('${day.date}')">
+      <div class="session-card-header">
+        <div class="session-date">${dateStr}</div>
+        ${day.name ? `<span class="session-badge">${day.name}</span>` : ''}
+      </div>
+      <div class="session-meta">
+        <span class="session-meta-item">💪 ${exoNames.length} exercice${exoNames.length>1?'s':''}</span>
+      </div>
+      <div class="session-exos">${chips}</div>
+    </div>`;
+}
+
+function toggleMonthGroup(mk) {
+  const el = document.getElementById('mg-' + mk);
+  if (el) el.classList.toggle('collapsed');
+}
+
+// ══════════════════════════════════
+// NEW SESSION
+// ══════════════════════════════════
+let currentSets = []; // [{reps, weight, comment}]
+
+function renderSetBuilder() {
+  const builder = document.getElementById('set-builder');
+  document.getElementById('sets-count-label').textContent = currentSets.length;
+  if (currentSets.length === 0) { builder.innerHTML = ''; return; }
+  builder.innerHTML = currentSets.map((s, i) => `
+    <div class="set-builder-row">
+      <div class="set-builder-row-top">
+        <span class="set-num">S${i+1}</span>
+        <input type="number" class="set-mini-input" placeholder="Reps" min="1"
+          value="${s.reps||''}" oninput="currentSets[${i}].reps=parseInt(this.value)||0">
+        <input type="number" class="set-mini-input" placeholder="kg" min="0" step="0.5"
+          value="${s.weight||''}" oninput="currentSets[${i}].weight=parseFloat(this.value)||0">
+        <button class="set-del-btn" onclick="removeSet(${i})">✕</button>
+      </div>
+      <input type="text" class="set-comment-input" placeholder="Commentaire (optionnel)"
+        value="${s.comment||''}" oninput="currentSets[${i}].comment=this.value">
+    </div>`).join('');
+}
+
+function removeSet(i) {
+  currentSets.splice(i, 1);
+  renderSetBuilder();
+}
+
+document.getElementById('btn-add-set').addEventListener('click', () => {
+  // Pre-fill with last set's values for convenience
+  const last = currentSets[currentSets.length - 1];
+  currentSets.push({ reps: last?.reps||0, weight: last?.weight||0, comment: '' });
+  renderSetBuilder();
+  // Scroll to bottom of sheet
+  setTimeout(() => {
+    const sheet = document.querySelector('#overlay-new .sheet');
+    sheet.scrollTop = sheet.scrollHeight;
+  }, 50);
+});
+
+document.getElementById('fab').addEventListener('click', () => {
+  currentSession = { date: '', name: '', exercises: [] };
+  currentSets = [];
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('session-date').value = today;
+  document.getElementById('session-name').value = '';
+  document.getElementById('exo-name').value = '';
+  renderSetBuilder();
+  renderNewExoList();
+  openOverlay('overlay-new');
+});
+
+document.getElementById('btn-add-exo').addEventListener('click', () => {
+  const name = document.getElementById('exo-name').value.trim();
+  if (!name) { flashInput('exo-name'); return; }
+  if (currentSets.length === 0) {
+    const btn = document.getElementById('btn-add-set');
+    btn.style.borderColor = 'var(--accent2)'; btn.style.color = 'var(--accent2)';
+    setTimeout(() => { btn.style.borderColor=''; btn.style.color=''; }, 800);
+    return;
+  }
+  const hasReps = currentSets.some(s => s.reps > 0);
+  if (!hasReps) { 
+    const first = document.querySelector('.set-mini-input');
+    if(first){ first.style.borderColor='var(--accent2)'; setTimeout(()=>first.style.borderColor='',800); }
+    return;
+  }
+  // Store each set as a separate exercise entry (keeps stats logic intact)
+  currentSets.forEach(s => {
+    currentSession.exercises.push({ name, sets: 1, reps: s.reps||0, weight: s.weight||0, comment: s.comment||'' });
+  });
+  document.getElementById('exo-name').value = '';
+  currentSets = [];
+  renderSetBuilder();
+  renderNewExoList();
+});
+
+function flashInput(id) {
+  const el = document.getElementById(id);
+  el.style.borderColor = 'var(--accent2)';
+  el.focus();
+  setTimeout(() => el.style.borderColor = '', 800);
+}
+
+function renderNewExoList() {
+  const list = document.getElementById('new-exo-list');
+  if (currentSession.exercises.length === 0) {
+    list.innerHTML = '<div style="padding:10px 0;text-align:center;color:var(--text3);font-size:13px;">Aucun exercice pour l\'instant</div>';
+    return;
+  }
+  // Group by name preserving order
+  const groups = [];
+  const seen = {};
+  currentSession.exercises.forEach((e, idx) => {
+    if (seen[e.name] === undefined) { seen[e.name] = groups.length; groups.push({ name: e.name, sets: [] }); }
+    groups[seen[e.name]].sets.push({ ...e, idx });
+  });
+  list.innerHTML = groups.map(g => {
+    const firstIdx = g.sets[0].idx;
+    const setsHtml = g.sets.map((s,i) => `<div class="exo-item-set-row">S${i+1}: <strong>${s.reps} reps</strong>${s.weight ? ` @ <strong>${s.weight}kg</strong>` : ''}${s.comment ? `<div class="set-comment">💬 ${s.comment}</div>` : ''}</div>`).join('');
+    return `<div class="exo-item">
+      <div class="exo-item-header">
+        <div><div class="exo-item-name">${g.name}</div><div class="exo-item-detail">${g.sets.length} série${g.sets.length>1?'s':''}</div></div>
+        <button class="exo-item-del" onclick="removeExoGroup('${g.name}')">✕</button>
+      </div>
+      <div class="exo-item-sets">${setsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function removeExoGroup(name) {
+  currentSession.exercises = currentSession.exercises.filter(e => e.name !== name);
+  renderNewExoList();
+}
+
+document.getElementById('btn-finish-session').addEventListener('click', () => {
+  const date = document.getElementById('session-date').value;
+  if (!date) { flashInput('session-date'); return; }
+  if (currentSession.exercises.length === 0) {
+    const list = document.getElementById('new-exo-list');
+    list.style.outline = '1px solid var(--accent2)'; list.style.borderRadius = '12px';
+    setTimeout(() => { list.style.outline = ''; }, 800);
+    return;
+  }
+  currentSession.date = date;
+  currentSession.name = document.getElementById('session-name').value.trim();
+  DB.addSession({...currentSession});
+  closeOverlay('overlay-new');
+  renderHome();
+});
+
+document.getElementById('btn-cancel-session').addEventListener('click', () => closeOverlay('overlay-new'));
+
+// ══════════════════════════════════
+// SESSION DETAIL
+// ══════════════════════════════════
+// Open detail by merging all sessions on the same date
+function openDetailForDate(date) {
+  const sessions = DB.getSessions().filter(s => s.date === date);
+  if (!sessions.length) return;
+  // Use first session as representative for edit/delete (simplest UX)
+  detailSessionId = sessions[0].id;
+
+  const d = new Date(date + 'T12:00:00');
+  const dateStr = d.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  document.getElementById('detail-title').textContent = dateStr.toUpperCase();
+
+  // Merge all exercises from all sessions on this date
+  const allExos = sessions.flatMap(s => s.exercises);
+  const exoNames = [...new Set(allExos.map(e => e.name))];
+
+  let badges = `<span class="session-badge">${exoNames.length} exercice${exoNames.length>1?'s':''}</span>`;
+  const name = sessions.find(s => s.name)?.name;
+  if (name) badges += `<span class="session-badge" style="background:rgba(255,255,255,0.08);color:var(--text)">${name}</span>`;
+  document.getElementById('detail-badges').innerHTML = badges;
+
+  // Build grouped view: collapsed by default (show max weight only)
+  const grouped = {};
+  allExos.forEach(e => {
+    if (!grouped[e.name]) grouped[e.name] = [];
+    grouped[e.name].push(e);
+  });
+
+  let html = '';
+  exoNames.forEach(name => {
+    const exos = grouped[name];
+    const maxWeight = Math.max(...exos.map(e => e.weight || 0));
+    const maxReps = Math.max(...exos.map(e => e.reps || 0));
+    const maxLabel = maxWeight > 0 ? `${maxWeight} kg max` : `${maxReps} reps max`;
+    const sets = exos.map((e, i) => `
+      <div class="set-badge" style="display:flex;flex-direction:column;gap:2px">
+        <div>Série ${i+1}: <strong>${e.reps} reps</strong>${e.weight ? ` @ <strong>${e.weight}kg</strong>` : ''}</div>
+        ${e.comment ? `<div style="font-style:italic;color:var(--text3);font-size:11px">💬 ${e.comment}</div>` : ''}
+      </div>`).join('');
+    html += `
+      <div class="detail-exo-item collapsed" onclick="toggleDetailExo(this)">
+        <div class="detail-exo-summary">
+          <div class="detail-exo-name">${name}</div>
+          <div style="display:flex;align-items:center">
+            <span class="detail-exo-maxweight">${maxLabel}</span>
+            <span class="detail-exo-arrow">▾</span>
+          </div>
+        </div>
+        <div class="detail-exo-sets" style="flex-direction:column;margin-top:8px">${sets}</div>
+      </div>`;
+  });
+  document.getElementById('detail-exos').innerHTML = html;
+  openOverlay('overlay-detail');
+}
+
+function toggleDetailExo(el) {
+  el.classList.toggle('collapsed');
+}
+
+function openDetail(id) {
+  const sessions = DB.getSessions();
+  const s = sessions.find(x => x.id === id);
+  if (!s) return;
+  openDetailForDate(s.date);
+}
+
+document.getElementById('btn-delete-session').addEventListener('click', () => {
+  if (confirm('Supprimer cette séance ?')) {
+    DB.deleteSession(detailSessionId);
+    closeOverlay('overlay-detail');
+    renderHome();
+    if (document.getElementById('screen-cal').classList.contains('active')) renderCalendar();
+  }
+});
+
+document.getElementById('overlay-detail').addEventListener('click', e => {
+  if (e.target === document.getElementById('overlay-detail')) closeOverlay('overlay-detail');
+});
+document.getElementById('overlay-new').addEventListener('click', e => {
+  if (e.target === document.getElementById('overlay-new')) closeOverlay('overlay-new');
+});
+document.getElementById('overlay-edit').addEventListener('click', e => {
+  if (e.target === document.getElementById('overlay-edit')) closeOverlay('overlay-edit');
+});
+
+// ══════════════════════════════════
+// EDIT SESSION
+// ══════════════════════════════════
+document.getElementById('btn-edit-session').addEventListener('click', () => {
+  const sessions = DB.getSessions();
+  editSession = JSON.parse(JSON.stringify(sessions.find(x => x.id === detailSessionId)));
+  if (!editSession) return;
+  document.getElementById('edit-session-date').value = editSession.date;
+  document.getElementById('edit-session-name').value = editSession.name || '';
+  document.getElementById('edit-exo-name').value = '';
+  editSets = [];
+  renderEditSetBuilder();
+  renderEditExoList();
+  closeOverlay('overlay-detail');
+  openOverlay('overlay-edit');
+  setTimeout(() => setupAutocomplete('edit-exo-name', 'edit-exo-autocomplete'), 50);
+});
+
+function renderEditSetBuilder() {
+  const builder = document.getElementById('edit-set-builder');
+  document.getElementById('edit-sets-count-label').textContent = editSets.length;
+  if (editSets.length === 0) { builder.innerHTML = ''; return; }
+  builder.innerHTML = editSets.map((s, i) => `
+    <div class="set-builder-row">
+      <div class="set-builder-row-top">
+        <span class="set-num">S${i+1}</span>
+        <input type="number" class="set-mini-input" placeholder="Reps" min="1"
+          value="${s.reps||''}" oninput="editSets[${i}].reps=parseInt(this.value)||0">
+        <input type="number" class="set-mini-input" placeholder="kg" min="0" step="0.5"
+          value="${s.weight||''}" oninput="editSets[${i}].weight=parseFloat(this.value)||0">
+        <button class="set-del-btn" onclick="removeEditSet(${i})">✕</button>
+      </div>
+      <input type="text" class="set-comment-input" placeholder="Commentaire (optionnel)"
+        value="${s.comment||''}" oninput="editSets[${i}].comment=this.value">
+    </div>`).join('');
+}
+
+function removeEditSet(i) {
+  editSets.splice(i, 1);
+  renderEditSetBuilder();
+}
+
+document.getElementById('edit-btn-add-set').addEventListener('click', () => {
+  const last = editSets[editSets.length - 1];
+  editSets.push({ reps: last?.reps||0, weight: last?.weight||0, comment: '' });
+  renderEditSetBuilder();
+  setTimeout(() => {
+    const sheet = document.querySelector('#overlay-edit .sheet');
+    sheet.scrollTop = sheet.scrollHeight;
+  }, 50);
+});
+
+document.getElementById('edit-btn-add-exo').addEventListener('click', () => {
+  const name = document.getElementById('edit-exo-name').value.trim();
+  if (!name) { flashEditInput('edit-exo-name'); return; }
+  if (editSets.length === 0) {
+    const btn = document.getElementById('edit-btn-add-set');
+    btn.style.borderColor='var(--accent2)'; btn.style.color='var(--accent2)';
+    setTimeout(()=>{btn.style.borderColor='';btn.style.color='';},800);
+    return;
+  }
+  editSets.forEach(s => {
+    editSession.exercises.push({ name, sets:1, reps:s.reps||0, weight:s.weight||0, comment:s.comment||'' });
+  });
+  document.getElementById('edit-exo-name').value = '';
+  editSets = [];
+  renderEditSetBuilder();
+  renderEditExoList();
+});
+
+function flashEditInput(id) {
+  const el = document.getElementById(id);
+  el.style.borderColor = 'var(--accent2)'; el.focus();
+  setTimeout(() => el.style.borderColor = '', 800);
+}
+
+function renderEditExoList() {
+  const list = document.getElementById('edit-exo-list');
+  if (!editSession || editSession.exercises.length === 0) {
+    list.innerHTML = '<div style="padding:10px 0;text-align:center;color:var(--text3);font-size:13px;">Aucun exercice</div>';
+    return;
+  }
+  const groups = [];
+  const seen = {};
+  editSession.exercises.forEach((e, idx) => {
+    if (seen[e.name] === undefined) { seen[e.name] = groups.length; groups.push({ name: e.name, sets: [] }); }
+    groups[seen[e.name]].sets.push({ ...e, idx });
+  });
+  list.innerHTML = groups.map(g => {
+    const setsHtml = g.sets.map((s,i) => `
+      <div class="set-builder-row" style="margin-bottom:4px">
+        <div class="set-builder-row-top">
+          <span class="set-num">S${i+1}</span>
+          <input type="number" class="set-mini-input" placeholder="Reps" min="1"
+            value="${s.reps||''}" oninput="updateEditExoSet('${g.name}',${i},'reps',parseInt(this.value)||0)">
+          <input type="number" class="set-mini-input" placeholder="kg" min="0" step="0.5"
+            value="${s.weight||''}" oninput="updateEditExoSet('${g.name}',${i},'weight',parseFloat(this.value)||0)">
+          <button class="set-del-btn" onclick="deleteEditExoSet('${g.name}',${i})">✕</button>
+        </div>
+        <input type="text" class="set-comment-input" placeholder="Commentaire (optionnel)"
+          value="${s.comment||''}" oninput="updateEditExoSet('${g.name}',${i},'comment',this.value)">
+      </div>`).join('');
+    return `<div class="exo-item" style="margin-bottom:8px">
+      <div class="exo-item-header">
+        <div class="exo-item-name">${g.name}</div>
+        <button class="exo-item-del" onclick="removeEditExoGroup('${g.name}')">✕</button>
+      </div>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">${setsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function updateEditExoSet(name, setIdx, field, val) {
+  let count = 0;
+  editSession.exercises.forEach(e => {
+    if (e.name === name) {
+      if (count === setIdx) e[field] = val;
+      count++;
+    }
+  });
+}
+
+function deleteEditExoSet(name, setIdx) {
+  let count = 0;
+  editSession.exercises = editSession.exercises.filter(e => {
+    if (e.name !== name) return true;
+    return count++ !== setIdx;
+  });
+  renderEditExoList();
+}
+
+function removeEditExoGroup(name) {
+  editSession.exercises = editSession.exercises.filter(e => e.name !== name);
+  renderEditExoList();
+}
+
+document.getElementById('edit-btn-save').addEventListener('click', () => {
+  const date = document.getElementById('edit-session-date').value;
+  if (!date) { flashEditInput('edit-session-date'); return; }
+  editSession.date = date;
+  editSession.name = document.getElementById('edit-session-name').value.trim();
+  DB.updateSession(editSession.id, editSession);
+  closeOverlay('overlay-edit');
+  renderHome();
+  if (document.getElementById('screen-cal').classList.contains('active')) renderCalendar();
+});
+
+document.getElementById('edit-btn-cancel').addEventListener('click', () => {
+  closeOverlay('overlay-edit');
+  openOverlay('overlay-detail');
+});
+
+// ══════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════
+const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const DAYS_FR = ['L','M','M','J','V','S','D'];
+
+function renderCalendar() {
+  const sessions = DB.getSessions();
+  const sessionDates = new Set(sessions.map(s => s.date));
+  const today = new Date().toISOString().split('T')[0];
+
+  document.getElementById('cal-month-label').textContent = MONTHS_FR[calMonth] + ' ' + calYear;
+  
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const offset = firstDay === 0 ? 6 : firstDay - 1;
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  
+  let html = DAYS_FR.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+  for (let i = 0; i < offset; i++) html += '<div class="cal-day empty"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const hasSession = sessionDates.has(dateStr);
+    const isToday = dateStr === today;
+    let cls = 'cal-day';
+    if (hasSession) cls += ' has-session';
+    if (isToday) cls += ' today';
+    const onclick = hasSession ? `onclick="calDayClick('${dateStr}')"` : '';
+    html += `<div class="${cls}" ${onclick}>${d}</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML = html;
+}
+
+function calDayClick(dateStr) {
+  openDetailForDate(dateStr);
+}
+
+document.getElementById('cal-prev').addEventListener('click', () => {
+  calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+});
+document.getElementById('cal-next').addEventListener('click', () => {
+  calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
+});
+
+// ══════════════════════════════════
+// STATS + CHART
+// ══════════════════════════════════
+function updateStatsPeriodLabel() {
+  if (statsPeriod === 'monthly') {
+    document.getElementById('stats-period-label').textContent = MONTHS_FR[statsNavMonth] + ' ' + statsNavYear;
+  } else {
+    document.getElementById('stats-period-label').textContent = String(statsNavYear);
+  }
+}
+
+function renderStats() {
+  const exoNames = DB.getAllExerciseNames();
+  const sel = document.getElementById('stats-exo-select');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— Choisir un exercice —</option>' +
+    exoNames.map(n => `<option value="${n}" ${n===statsExo?'selected':''}>${n}</option>`).join('');
+  if (current && exoNames.includes(current)) sel.value = current;
+  updateStatsPeriodLabel();
+  renderChart();
+}
+
+function renderChart() {
+  const area = document.getElementById('stats-chart-area');
+  updateStatsPeriodLabel();
+  if (!statsExo) { area.innerHTML = '<div class="no-data">Sélectionnez un exercice pour voir son évolution</div>'; return; }
+
+  const sessions = DB.getSessions().sort((a,b) => a.date.localeCompare(b.date));
+  let labels = [], values = [], title = '';
+
+  if (statsPeriod === 'monthly') {
+    // One point per training day in the selected month
+    const yStr = String(statsNavYear);
+    const mStr = String(statsNavMonth + 1).padStart(2, '0');
+    const prefix = `${yStr}-${mStr}-`;
+    const filtered = sessions.filter(s => s.date.startsWith(prefix));
+    filtered.forEach(s => {
+      const exos = s.exercises.filter(e => e.name === statsExo);
+      if (!exos.length) return;
+      const day = s.date.slice(8); // DD
+      const val = statsMetric === 'weight'
+        ? Math.max(...exos.map(e => e.weight || 0))
+        : Math.max(...exos.map(e => e.reps || 0));
+      labels.push(day + '/' + mStr);
+      values.push(val);
+    });
+    title = `${statsExo} — ${MONTHS_FR[statsNavMonth]} ${statsNavYear} — ${statsMetric==='weight'?'Charge max (kg)':'Reps max'}`;
+  } else {
+    // One point per month in the selected year — max value across all sessions that month
+    const yStr = String(statsNavYear);
+    for (let m = 0; m < 12; m++) {
+      const mStr = String(m + 1).padStart(2, '0');
+      const prefix = `${yStr}-${mStr}-`;
+      const monthSessions = sessions.filter(s => s.date.startsWith(prefix));
+      let maxVal = null;
+      monthSessions.forEach(s => {
+        const exos = s.exercises.filter(e => e.name === statsExo);
+        if (!exos.length) return;
+        const val = statsMetric === 'weight'
+          ? Math.max(...exos.map(e => e.weight || 0))
+          : Math.max(...exos.map(e => e.reps || 0));
+        if (maxVal === null || val > maxVal) maxVal = val;
+      });
+      if (maxVal !== null) {
+        labels.push(MONTHS_FR[m].length <= 5 ? MONTHS_FR[m] : MONTHS_FR[m].slice(0, 3));
+        values.push(maxVal);
+      }
+    }
+    title = `${statsExo} — ${statsNavYear} — ${statsMetric==='weight'?'Charge max (kg)':'Reps max'}`;
+  }
+
+  if (values.length === 0) {
+    area.innerHTML = '<div class="no-data">Aucune donnée sur cette période</div>';
+    return;
+  }
+
+  area.innerHTML = `<div class="chart-card"><div class="chart-title">${title}</div><div class="chart-area"><canvas id="myChart"></canvas></div></div>`;
+  drawChart('myChart', labels, values);
+}
+
+function drawChart(id, labels, data) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  const W = canvas.parentElement.clientWidth;
+  const H = 180;
+  canvas.width = W * window.devicePixelRatio;
+  canvas.height = H * window.devicePixelRatio;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  const pad = { top: 20, right: 16, bottom: 40, left: 44 };
+  const w = W - pad.left - pad.right;
+  const h = H - pad.top - pad.bottom;
+
+  // ── Compute nice round Y ticks ──
+  const rawMax = Math.max(...data);
+
+  function niceStep(rawRange, targetTicks) {
+    const rough = rawRange / targetTicks;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(rough)));
+    const normalized = rough / magnitude;
+    let nice;
+    if (normalized <= 1) nice = 1;
+    else if (normalized <= 2) nice = 2;
+    else if (normalized <= 2.5) nice = 2.5;
+    else if (normalized <= 5) nice = 5;
+    else nice = 10;
+    return nice * magnitude;
+  }
+
+  const step = niceStep(rawMax || 10, 4);
+  const axisMax = Math.ceil((rawMax * 1.05 || 10) / step) * step;
+  const min = 0;
+  const ticks = [];
+  for (let v = 0; v <= axisMax; v += step) ticks.push(v);
+
+  const x = i => pad.left + (i / (data.length - 1 || 1)) * w;
+  const y = v => pad.top + h - (v / axisMax) * h;
+
+  // Grid
+  ctx.strokeStyle = '#2a2a2a'; ctx.lineWidth = 1;
+  ticks.forEach(v => {
+    const yv = y(v);
+    ctx.beginPath(); ctx.moveTo(pad.left, yv); ctx.lineTo(pad.left + w, yv); ctx.stroke();
+    ctx.fillStyle = '#555'; ctx.font = '10px DM Sans'; ctx.textAlign = 'right';
+    ctx.fillText(v % 1 === 0 ? v : v.toFixed(1), pad.left - 6, yv + 4);
+  });
+
+  // ── Dynamic accent color ──
+  const accentHex = document.documentElement.dataset.accentHex || '#e8ff3c';
+  const accentR = document.documentElement.dataset.accentR || 232;
+  const accentG = document.documentElement.dataset.accentG || 255;
+  const accentB = document.documentElement.dataset.accentB || 60;
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + h);
+  grad.addColorStop(0, `rgba(${accentR},${accentG},${accentB},0.25)`);
+  grad.addColorStop(1, `rgba(${accentR},${accentG},${accentB},0)`);
+  ctx.beginPath();
+  ctx.moveTo(x(0), y(data[0]));
+  data.forEach((v,i) => { if(i>0) ctx.lineTo(x(i), y(v)); });
+  ctx.lineTo(x(data.length-1), pad.top + h);
+  ctx.lineTo(x(0), pad.top + h);
+  ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+
+  // Line
+  ctx.beginPath(); ctx.strokeStyle = accentHex; ctx.lineWidth = 2.5; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  data.forEach((v,i) => { i===0 ? ctx.moveTo(x(i),y(v)) : ctx.lineTo(x(i),y(v)); });
+  ctx.stroke();
+
+  // Dots + value labels above
+  data.forEach((v,i) => {
+    ctx.beginPath(); ctx.arc(x(i), y(v), 4, 0, Math.PI*2);
+    ctx.fillStyle = accentHex; ctx.fill();
+    ctx.beginPath(); ctx.arc(x(i), y(v), 2, 0, Math.PI*2);
+    ctx.fillStyle = '#000'; ctx.fill();
+    // Value above dot
+    ctx.fillStyle = accentHex; ctx.font = 'bold 9px DM Sans'; ctx.textAlign = 'center';
+    ctx.fillText(v, x(i), y(v) - 7);
+  });
+
+  // X labels
+  ctx.fillStyle = '#666'; ctx.font = '10px DM Sans'; ctx.textAlign = 'center';
+  labels.forEach((l, i) => {
+    if (data.length <= 8 || i % Math.ceil(data.length/8) === 0 || i === data.length-1)
+      ctx.fillText(l, x(i), H - 8);
+  });
+}
+
+// Stats period nav
+document.getElementById('stats-period-prev').addEventListener('click', () => {
+  if (statsPeriod === 'monthly') {
+    statsNavMonth--; if (statsNavMonth < 0) { statsNavMonth = 11; statsNavYear--; }
+  } else {
+    statsNavYear--;
+  }
+  renderChart();
+});
+document.getElementById('stats-period-next').addEventListener('click', () => {
+  if (statsPeriod === 'monthly') {
+    statsNavMonth++; if (statsNavMonth > 11) { statsNavMonth = 0; statsNavYear++; }
+  } else {
+    statsNavYear++;
+  }
+  renderChart();
+});
+
+// Stats tab controls
+document.querySelectorAll('.stats-tab[data-period]').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.stats-tab[data-period]').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    statsPeriod = t.dataset.period;
+    updateStatsPeriodLabel();
+    renderChart();
+  });
+});
+document.querySelectorAll('.stats-tab[data-metric]').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.stats-tab[data-metric]').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    statsMetric = t.dataset.metric;
+    renderChart();
+  });
+});
+document.getElementById('stats-exo-select').addEventListener('change', e => {
+  statsExo = e.target.value;
+  renderChart();
+});
+
+// ══════════════════════════════════
+// AUTOCOMPLETE
+// ══════════════════════════════════
+function normalize(str) {
+  return str
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove accents
+    .replace(/[\s\-_]+/g, ''); // remove spaces, hyphens, underscores
+}
+
+function fuzzyMatch(query, candidate) {
+  const q = normalize(query);
+  const c = normalize(candidate);
+  if (!q) return { match: true, score: 0 };
+  // Exact substring match (highest priority)
+  if (c === q) return { match: true, score: 200 };
+  if (c.startsWith(q)) return { match: true, score: 150 };
+  if (c.includes(q)) return { match: true, score: 100 };
+  // Word-level: any word starts with query
+  const words = candidate.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').split(/[\s\-_]+/);
+  if (words.some(w => w.startsWith(q))) return { match: true, score: 80 };
+  // Fuzzy: every char of q must appear in order in c
+  let qi = 0;
+  for (let ci = 0; ci < c.length && qi < q.length; ci++) {
+    if (c[ci] === q[qi]) qi++;
+  }
+  return qi === q.length ? { match: true, score: 10 } : { match: false, score: 0 };
+}
+
+function highlightMatch(query, candidate) {
+  if (!query.trim()) return candidate;
+  const q = normalize(query);
+  // Build a no-accent, no-space version of candidate for matching
+  const stripped = candidate.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s\-_]+/g,'').toLowerCase();
+  const idx = stripped.indexOf(q);
+  if (idx >= 0) {
+    // Map stripped index back to original string position
+    let strippedCount = 0, start = -1, end = -1;
+    for (let i = 0; i < candidate.length; i++) {
+      const ch = candidate[i];
+      if (!/[\s\-_]/.test(ch)) {
+        if (strippedCount === idx && start === -1) start = i;
+        if (strippedCount === idx + q.length - 1) { end = i + 1; break; }
+        strippedCount++;
+      }
+    }
+    if (start >= 0 && end >= 0) {
+      return candidate.slice(0, start) + '<mark>' + candidate.slice(start, end) + '</mark>' + candidate.slice(end);
+    }
+  }
+  return candidate;
+}
+
+function setupAutocomplete(inputId, dropdownId) {
+  const input = document.getElementById(inputId);
+  const dropdown = document.getElementById(dropdownId);
+  if (!input || !dropdown) return;
+
+  function showDropdown(query) {
+    const allNames = DB.getAllExerciseNames();
+    if (allNames.length === 0) { dropdown.style.display = 'none'; return; }
+    const q = query.trim();
+
+    if (!q) {
+      // Show all as quick-pick chips (max 12)
+      const chips = allNames.slice(0, 12).map(n =>
+        `<span class="autocomplete-chip" onmousedown="pickAutocomplete('${inputId}','${dropdownId}','${n.replace(/'/g,"\\'")}')" ontouchstart="pickAutocomplete('${inputId}','${dropdownId}','${n.replace(/'/g,"\\'")}');event.preventDefault()">${n}</span>`
+      ).join('');
+      dropdown.innerHTML = `<div class="autocomplete-chips">${chips}</div>`;
+      dropdown.style.display = 'block';
+      return;
+    }
+
+    const results = allNames
+      .map(n => ({ name: n, ...fuzzyMatch(q, n) }))
+      .filter(r => r.match)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 7);
+
+    if (results.length === 0) { dropdown.style.display = 'none'; return; }
+
+    dropdown.innerHTML = results.map(r =>
+      `<div class="autocomplete-item"
+        onmousedown="pickAutocomplete('${inputId}','${dropdownId}','${r.name.replace(/'/g,"\\'")}')"
+        ontouchstart="pickAutocomplete('${inputId}','${dropdownId}','${r.name.replace(/'/g,"\\'")}');event.preventDefault()">
+        ${highlightMatch(q, r.name)}
+      </div>`
+    ).join('');
+    dropdown.style.display = 'block';
+  }
+
+  input.addEventListener('input', () => showDropdown(input.value));
+  input.addEventListener('focus', () => showDropdown(input.value));
+  input.addEventListener('blur', () => setTimeout(() => { dropdown.style.display = 'none'; }, 200));
+}
+
+function pickAutocomplete(inputId, dropdownId, value) {
+  const input = document.getElementById(inputId);
+  input.value = value;
+  document.getElementById(dropdownId).style.display = 'none';
+  input.focus();
+}
+
+// Init autocomplete on both fields
+setupAutocomplete('exo-name', 'exo-autocomplete');
+setupAutocomplete('edit-exo-name', 'edit-exo-autocomplete');
+
+// ══════════════════════════════════
+// OVERLAY HELPERS
+// ══════════════════════════════════
+function openOverlay(id) { document.getElementById(id).classList.add('open'); }
+function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
+
+// ══════════════════════════════════
+// OPTIONS & DISPLAY
+// ══════════════════════════════════
+const ACCENT_COLORS = {
+  default: { hex: '#e8ff3c', r:232, g:255, b:60  },
+  red:     { hex: '#FF0000', r:255, g:0,   b:0   },
+  green:   { hex: '#26FF00', r:38,  g:255, b:0   },
+  blue:    { hex: '#0040FF', r:0,   g:64,  b:255 },
+  pink:    { hex: '#FF00C8', r:255, g:0,   b:200 },
+  purple:  { hex: '#E100FF', r:225, g:0,   b:255 },
+};
+
+function applyAccent(key) {
+  const c = ACCENT_COLORS[key] || ACCENT_COLORS.default;
+  const r = document.documentElement;
+  r.style.setProperty('--accent', c.hex);
+  r.style.setProperty('--accent-glow',    `rgba(${c.r},${c.g},${c.b},0.4)`);
+  r.style.setProperty('--accent-glow2',   `rgba(${c.r},${c.g},${c.b},0.3)`);
+  r.style.setProperty('--accent-glow3',   `rgba(${c.r},${c.g},${c.b},0.25)`);
+  r.style.setProperty('--accent-tint',    `rgba(${c.r},${c.g},${c.b},0.12)`);
+  r.style.setProperty('--accent-tint2',   `rgba(${c.r},${c.g},${c.b},0.1)`);
+  r.style.setProperty('--accent-tint3',   `rgba(${c.r},${c.g},${c.b},0.08)`);
+  r.style.setProperty('--accent-tint4',   `rgba(${c.r},${c.g},${c.b},0.04)`);
+  r.style.setProperty('--accent-border',  `rgba(${c.r},${c.g},${c.b},0.3)`);
+  r.style.setProperty('--accent-border2', `rgba(${c.r},${c.g},${c.b},0.25)`);
+  r.style.setProperty('--accent-border3', `rgba(${c.r},${c.g},${c.b},0.2)`);
+  // Also update chart gradient fill color via a data attribute read by drawChart
+  document.documentElement.dataset.accentHex = c.hex;
+  document.documentElement.dataset.accentR = c.r;
+  document.documentElement.dataset.accentG = c.g;
+  document.documentElement.dataset.accentB = c.b;
+}
+
+function setTheme(mode) {
+  if (mode === 'light') document.body.classList.add('light');
+  else document.body.classList.remove('light');
+  localStorage.setItem('ironlog_theme', mode);
+  syncDisplayUI();
+}
+
+function setAccent(key) {
+  applyAccent(key);
+  localStorage.setItem('ironlog_accent', key);
+  syncDisplayUI();
+}
+
+function syncDisplayUI() {
+  const theme = localStorage.getItem('ironlog_theme') || 'dark';
+  document.getElementById('theme-dark').classList.toggle('active', theme === 'dark');
+  document.getElementById('theme-light').classList.toggle('active', theme === 'light');
+  const accent = localStorage.getItem('ironlog_accent') || 'default';
+  document.querySelectorAll('.color-swatch').forEach(s => {
+    s.classList.toggle('active', s.dataset.color === accent);
+  });
+}
+
+document.getElementById('options-back').addEventListener('click', () => {
+  // Go back to whichever main tab was last active, default home
+  const prev = localStorage.getItem('ironlog_last_screen') || 'home';
+  showScreen(prev);
+});
+document.getElementById('display-back').addEventListener('click', () => showScreen('options'));
+
+// Track last visited main screen for back button
+['home','cal','stats'].forEach(id => {
+  document.querySelector(`.nav-btn[data-screen="${id}"]`).addEventListener('click', () => {
+    localStorage.setItem('ironlog_last_screen', id);
+  });
+});
+
+// Load saved preferences
+(function initPrefs() {
+  const theme = localStorage.getItem('ironlog_theme') || 'dark';
+  if (theme === 'light') document.body.classList.add('light');
+  const accent = localStorage.getItem('ironlog_accent') || 'default';
+  applyAccent(accent);
+})();
+
+// ══════════════════════════════════
+// INIT
+// ══════════════════════════════════
+renderHome();
+document.getElementById('fab').style.display = 'flex';
+</script>
+</body>
+</html>
