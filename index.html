@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>IRON LOG</title>
+<title>Workout Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -118,11 +118,14 @@
     display: flex; align-items: center;
   }
   .topbar-options-btn {
-    background: none; border: none; color: var(--text2);
-    font-size: 22px; cursor: pointer; padding: 4px;
-    transition: color 0.2s;
+    background: none; border: none; border-radius: 8px;
+    color: var(--accent);
+    cursor: pointer; padding: 6px 12px;
+    transition: opacity 0.2s; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    width: 56px; height: 38px; font-size: 22px;
   }
-  .topbar-options-btn:active { color: var(--accent); }
+  .topbar-options-btn:active { opacity: 0.6; }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; }
   
@@ -230,9 +233,20 @@
     transform: translateY(100%);
     transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
     padding-bottom: var(--safe-bottom);
+    touch-action: pan-y;
   }
   .overlay.open .sheet { transform: translateY(0); }
-  .sheet-handle { width: 40px; height: 4px; border-radius: 2px; background: var(--border); margin: 12px auto 20px; }
+  .sheet.dragging { transition: none; }
+  .sheet-handle {
+    width: 24px; height: 2px; border-radius: 99px;
+    background: var(--text3);
+    margin: 8px auto 16px;
+    display: block;
+    opacity: 0.4;
+    cursor: grab;
+    padding: 10px 50px; box-sizing: content-box;
+    margin-left: auto; margin-right: auto;
+  }
   .sheet-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 1px; padding: 0 20px 16px; }
 
   /* ── FORMS ── */
@@ -513,7 +527,7 @@
   </div>
 
   <!-- ══ SCREEN: OPTIONS ══ -->
-  <div class="screen" id="screen-options">
+  <div class="screen" id="screen-options" style="position:relative">
     <div class="topbar">
       <div style="display:flex;align-items:center;gap:10px">
         <button class="topbar-back" id="options-back">‹</button>
@@ -525,10 +539,17 @@
     </div>
     <div class="options-list">
       <div class="options-row" onclick="showScreen('display')">
-        <span class="options-row-label">🎨 Affichage</span>
+        <span class="options-row-label">Affichage</span>
         <span class="options-row-arrow">›</span>
       </div>
     </div>
+    <div style="position:absolute;bottom:calc(52px + var(--safe-bottom));left:0;right:0;padding:0 16px">
+      <div class="options-row" onclick="showScreen('credits')">
+        <span class="options-row-label">Crédits</span>
+        <span class="options-row-arrow">›</span>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:calc(20px + var(--safe-bottom));left:0;right:0;text-align:center;font-size:11px;color:var(--text3);letter-spacing:0.5px;">Version 1.1</div>
   </div>
 
   <!-- ══ SCREEN: DISPLAY ══ -->
@@ -546,8 +567,8 @@
     <div class="display-section">
       <div class="display-section-title">Thème</div>
       <div class="theme-toggle">
-        <div class="theme-btn" id="theme-dark" onclick="setTheme('dark')">🌙 Sombre</div>
-        <div class="theme-btn" id="theme-light" onclick="setTheme('light')">☀️ Clair</div>
+        <div class="theme-btn" id="theme-dark" onclick="setTheme('dark')">Sombre</div>
+        <div class="theme-btn" id="theme-light" onclick="setTheme('light')">Clair</div>
       </div>
     </div>
 
@@ -578,6 +599,29 @@
           <div class="swatch-circle" style="background:#E100FF"></div>
           <span>Violet</span>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: CREDITS ══ -->
+  <div class="screen" id="screen-credits">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="topbar-back" id="credits-back">‹</button>
+        <div>
+          <div class="topbar-title">CRÉDITS</div>
+          <div class="topbar-sub">Remerciements</div>
+        </div>
+      </div>
+    </div>
+    <div class="options-list">
+      <div class="options-row" style="flex-direction:column;align-items:flex-start;gap:14px;cursor:default">
+        <div style="font-size:15px;font-weight:600;color:var(--text)">Crédits : Zhalost</div>
+        <div style="font-size:14px;color:var(--text2)">Remerciement à Ludo</div>
+        <div style="height:1px;width:100%;background:var(--border)"></div>
+        <div style="font-size:14px;color:var(--text2)">Crédit : bilité</div>
+        <div style="font-size:14px;color:var(--text2)">Crudité : Concombre</div>
+        <div style="font-size:14px;color:var(--text2)">Crédit : Voiture</div>
       </div>
     </div>
   </div>
@@ -614,10 +658,10 @@
       <input type="text" class="form-input" id="session-name" placeholder="ex: Push, Jambes, Full body...">
     </div>
 
-    <div class="divider"></div>
-    <div class="section-label">Exercices ajoutés</div>
-    <div class="exo-list" id="new-exo-list">
-      <div style="padding:10px 0;text-align:center;color:var(--text3);font-size:13px;">Aucun exercice pour l'instant</div>
+    <div id="new-exo-section" style="display:none">
+      <div class="divider"></div>
+      <div class="section-label">Exercices ajoutés</div>
+      <div class="exo-list" id="new-exo-list"></div>
     </div>
 
     <div class="divider"></div>
@@ -639,7 +683,7 @@
 
     <button class="btn btn-outline" id="btn-add-exo">＋ Ajouter cet exercice</button>
     <div style="height:12px"></div>
-    <button class="btn btn-primary" id="btn-finish-session">✓ Terminer la séance</button>
+    <button class="btn btn-primary" id="btn-finish-session">Terminer la séance</button>
     <button class="btn btn-danger" id="btn-cancel-session">Annuler</button>
     <div style="height:16px"></div>
   </div>
@@ -654,8 +698,32 @@
     <div class="divider"></div>
     <div class="section-label">Exercices</div>
     <div style="padding: 0 20px 20px;" id="detail-exos"></div>
-    <button class="btn btn-edit" id="btn-edit-session">✏️ Modifier la séance</button>
-    <button class="btn btn-danger" id="btn-delete-session">🗑 Supprimer la séance</button>
+    <button class="btn btn-edit" id="btn-edit-session">Modifier la séance</button>
+    <button class="btn btn-danger" id="btn-delete-session">Supprimer la séance</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: MERGE CONFIRM ══ -->
+<div class="overlay" id="overlay-merge">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">FUSIONNER ?</div>
+    <div style="padding: 0 20px 20px; font-size:14px; color:var(--text2); line-height:1.6;" id="merge-info"></div>
+    <button class="btn btn-primary" id="btn-confirm-merge">Fusionner les séances</button>
+    <button class="btn btn-outline" id="btn-cancel-merge">Annuler</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+<div class="overlay" id="overlay-confirm">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">SUPPRIMER ?</div>
+    <div style="padding: 0 20px 20px; font-size:14px; color:var(--text2); line-height:1.6;">
+      Cette séance sera définitivement supprimée. Cette action est irréversible.
+    </div>
+    <button class="btn btn-danger" id="btn-confirm-delete">Confirmer la suppression</button>
+    <button class="btn btn-outline" id="btn-cancel-delete">Annuler</button>
     <div style="height:16px"></div>
   </div>
 </div>
@@ -695,7 +763,7 @@
     <button class="btn-add-set-bottom" id="edit-btn-add-set"><span class="plus-icon">＋</span> Ajouter une série</button>
     <button class="btn btn-outline" id="edit-btn-add-exo">＋ Ajouter cet exercice</button>
     <div style="height:12px"></div>
-    <button class="btn btn-primary" id="edit-btn-save">✓ Enregistrer les modifications</button>
+    <button class="btn btn-primary" id="edit-btn-save">Enregistrer les modifications</button>
     <button class="btn btn-danger" id="edit-btn-cancel">Annuler</button>
     <div style="height:16px"></div>
   </div>
@@ -705,8 +773,42 @@
 // ══════════════════════════════════
 // DATA LAYER
 // ══════════════════════════════════
+
+// ── Migration from old "ironlog_*" keys ──
+(function migrateFromIronLog() {
+  const oldSessionsKey = 'ironlog_sessions';
+  const oldThemeKey    = 'ironlog_theme';
+  const oldAccentKey   = 'ironlog_accent';
+  const oldScreenKey   = 'ironlog_last_screen';
+
+  // Sessions
+  const oldSessions = localStorage.getItem(oldSessionsKey);
+  if (oldSessions && !localStorage.getItem('workouttracker_sessions')) {
+    localStorage.setItem('workouttracker_sessions', oldSessions);
+    localStorage.removeItem(oldSessionsKey);
+  }
+  // Theme
+  const oldTheme = localStorage.getItem(oldThemeKey);
+  if (oldTheme && !localStorage.getItem('workouttracker_theme')) {
+    localStorage.setItem('workouttracker_theme', oldTheme);
+    localStorage.removeItem(oldThemeKey);
+  }
+  // Accent
+  const oldAccent = localStorage.getItem(oldAccentKey);
+  if (oldAccent && !localStorage.getItem('workouttracker_accent')) {
+    localStorage.setItem('workouttracker_accent', oldAccent);
+    localStorage.removeItem(oldAccentKey);
+  }
+  // Last screen
+  const oldScreen = localStorage.getItem(oldScreenKey);
+  if (oldScreen && !localStorage.getItem('workouttracker_last_screen')) {
+    localStorage.setItem('workouttracker_last_screen', oldScreen);
+    localStorage.removeItem(oldScreenKey);
+  }
+})();
+
 const DB = {
-  KEY: 'ironlog_sessions',
+  KEY: 'workouttracker_sessions',
   load() {
     try { return JSON.parse(localStorage.getItem(this.KEY)) || []; }
     catch(e) { return []; }
@@ -715,6 +817,24 @@ const DB = {
   getSessions() { return this.load().sort((a,b) => b.date.localeCompare(a.date)); },
   addSession(s) {
     const all = this.load();
+    // Check if a session already exists on the same date
+    const existing = all.find(x => x.date === s.date);
+    if (existing) {
+      // Merge exercises
+      existing.exercises = [...existing.exercises, ...s.exercises];
+      // Merge names: combine if both have names and they differ
+      const existingName = (existing.name || '').trim();
+      const newName = (s.name || '').trim();
+      if (existingName && newName && existingName !== newName) {
+        existing.name = existingName + ' + ' + newName;
+      } else if (!existingName && newName) {
+        existing.name = newName;
+      }
+      // existing.name stays if newName is empty
+      this.save(all);
+      return existing;
+    }
+    // No existing session on this date — create new
     s.id = Date.now().toString();
     all.push(s);
     this.save(all);
@@ -798,7 +918,7 @@ function renderHome() {
   if (sessions.length === 0) {
     content.innerHTML = `
       <div class="empty-state">
-        <div class="empty-icon">🏋️</div>
+        <div class="empty-icon" style="display:none">🏋️</div>
         <div class="empty-title" style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--text2)">Prêt à soulever ?</div>
         <div class="empty-sub">Appuyez sur <strong style="color:var(--accent)">+</strong> pour ajouter votre première séance</div>
       </div>`;
@@ -881,7 +1001,7 @@ function renderDayCard(day, i) {
         ${day.name ? `<span class="session-badge">${day.name}</span>` : ''}
       </div>
       <div class="session-meta">
-        <span class="session-meta-item">💪 ${exoNames.length} exercice${exoNames.length>1?'s':''}</span>
+        <span class="session-meta-item">${exoNames.length} exercice${exoNames.length>1?'s':''}</span>
       </div>
       <div class="session-exos">${chips}</div>
     </div>`;
@@ -935,7 +1055,7 @@ document.getElementById('btn-add-set').addEventListener('click', () => {
 
 document.getElementById('fab').addEventListener('click', () => {
   currentSession = { date: '', name: '', exercises: [] };
-  currentSets = [];
+  currentSets = [{ reps: 0, weight: 0, comment: '' }];
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('session-date').value = today;
   document.getElementById('session-name').value = '';
@@ -979,10 +1099,13 @@ function flashInput(id) {
 
 function renderNewExoList() {
   const list = document.getElementById('new-exo-list');
+  const section = document.getElementById('new-exo-section');
   if (currentSession.exercises.length === 0) {
-    list.innerHTML = '<div style="padding:10px 0;text-align:center;color:var(--text3);font-size:13px;">Aucun exercice pour l\'instant</div>';
+    section.style.display = 'none';
+    list.innerHTML = '';
     return;
   }
+  section.style.display = 'block';
   // Group by name preserving order
   const groups = [];
   const seen = {};
@@ -992,7 +1115,7 @@ function renderNewExoList() {
   });
   list.innerHTML = groups.map(g => {
     const firstIdx = g.sets[0].idx;
-    const setsHtml = g.sets.map((s,i) => `<div class="exo-item-set-row">S${i+1}: <strong>${s.reps} reps</strong>${s.weight ? ` @ <strong>${s.weight}kg</strong>` : ''}${s.comment ? `<div class="set-comment">💬 ${s.comment}</div>` : ''}</div>`).join('');
+    const setsHtml = g.sets.map((s,i) => `<div class="exo-item-set-row">S${i+1}: <strong>${s.reps} reps</strong>${s.weight ? ` @ <strong>${s.weight}kg</strong>` : ''}${s.comment ? `<div class="set-comment">${s.comment}</div>` : ''}</div>`).join('');
     return `<div class="exo-item">
       <div class="exo-item-header">
         <div><div class="exo-item-name">${g.name}</div><div class="exo-item-detail">${g.sets.length} série${g.sets.length>1?'s':''}</div></div>
@@ -1019,12 +1142,35 @@ document.getElementById('btn-finish-session').addEventListener('click', () => {
   }
   currentSession.date = date;
   currentSession.name = document.getElementById('session-name').value.trim();
+
+  // Check if a session already exists on this date
+  const existing = DB.getSessions().find(s => s.date === date);
+  if (existing) {
+    // Show merge confirmation
+    const existingName = existing.name ? `"${existing.name}"` : 'sans titre';
+    document.getElementById('merge-info').textContent =
+      `Un entraînement ${existingName} existe déjà le ${new Date(date + 'T12:00:00').toLocaleDateString('fr-FR', {day:'numeric', month:'long'})}. Les exercices seront fusionnés.`;
+    openOverlay('overlay-merge');
+    return;
+  }
+
   DB.addSession({...currentSession});
   closeOverlay('overlay-new');
   renderHome();
 });
 
 document.getElementById('btn-cancel-session').addEventListener('click', () => closeOverlay('overlay-new'));
+
+document.getElementById('btn-confirm-merge').addEventListener('click', () => {
+  DB.addSession({...currentSession});
+  closeOverlay('overlay-merge');
+  closeOverlay('overlay-new');
+  renderHome();
+});
+
+document.getElementById('btn-cancel-merge').addEventListener('click', () => {
+  closeOverlay('overlay-merge');
+});
 
 // ══════════════════════════════════
 // SESSION DETAIL
@@ -1065,7 +1211,7 @@ function openDetailForDate(date) {
     const sets = exos.map((e, i) => `
       <div class="set-badge" style="display:flex;flex-direction:column;gap:2px">
         <div>Série ${i+1}: <strong>${e.reps} reps</strong>${e.weight ? ` @ <strong>${e.weight}kg</strong>` : ''}</div>
-        ${e.comment ? `<div style="font-style:italic;color:var(--text3);font-size:11px">💬 ${e.comment}</div>` : ''}
+        ${e.comment ? `<div style="font-style:italic;color:var(--text3);font-size:11px">${e.comment}</div>` : ''}
       </div>`).join('');
     html += `
       <div class="detail-exo-item collapsed" onclick="toggleDetailExo(this)">
@@ -1095,12 +1241,20 @@ function openDetail(id) {
 }
 
 document.getElementById('btn-delete-session').addEventListener('click', () => {
-  if (confirm('Supprimer cette séance ?')) {
-    DB.deleteSession(detailSessionId);
-    closeOverlay('overlay-detail');
-    renderHome();
-    if (document.getElementById('screen-cal').classList.contains('active')) renderCalendar();
-  }
+  closeOverlay('overlay-detail');
+  openOverlay('overlay-confirm');
+});
+
+document.getElementById('btn-confirm-delete').addEventListener('click', () => {
+  DB.deleteSession(detailSessionId);
+  closeOverlay('overlay-confirm');
+  renderHome();
+  if (document.getElementById('screen-cal').classList.contains('active')) renderCalendar();
+});
+
+document.getElementById('btn-cancel-delete').addEventListener('click', () => {
+  closeOverlay('overlay-confirm');
+  openOverlay('overlay-detail');
 });
 
 document.getElementById('overlay-detail').addEventListener('click', e => {
@@ -1639,18 +1793,20 @@ function closeOverlay(id) { document.getElementById(id).classList.remove('open')
 // OPTIONS & DISPLAY
 // ══════════════════════════════════
 const ACCENT_COLORS = {
-  default: { hex: '#e8ff3c', r:232, g:255, b:60  },
-  red:     { hex: '#FF0000', r:255, g:0,   b:0   },
-  green:   { hex: '#26FF00', r:38,  g:255, b:0   },
-  blue:    { hex: '#0040FF', r:0,   g:64,  b:255 },
-  pink:    { hex: '#FF00C8', r:255, g:0,   b:200 },
-  purple:  { hex: '#E100FF', r:225, g:0,   b:255 },
+  default: { hex: '#e8ff3c', hexLight: '#E6FC0F', r:232, g:255, b:60  },
+  red:     { hex: '#FF0000', hexLight: '#FF0000', r:255, g:0,   b:0   },
+  green:   { hex: '#26FF00', hexLight: '#26FF00', r:38,  g:255, b:0   },
+  blue:    { hex: '#0040FF', hexLight: '#0040FF', r:0,   g:64,  b:255 },
+  pink:    { hex: '#FF00C8', hexLight: '#FF00C8', r:255, g:0,   b:200 },
+  purple:  { hex: '#E100FF', hexLight: '#E100FF', r:225, g:0,   b:255 },
 };
 
 function applyAccent(key) {
   const c = ACCENT_COLORS[key] || ACCENT_COLORS.default;
+  const isLight = document.body.classList.contains('light');
+  const hex = (isLight && c.hexLight) ? c.hexLight : c.hex;
   const r = document.documentElement;
-  r.style.setProperty('--accent', c.hex);
+  r.style.setProperty('--accent', hex);
   r.style.setProperty('--accent-glow',    `rgba(${c.r},${c.g},${c.b},0.4)`);
   r.style.setProperty('--accent-glow2',   `rgba(${c.r},${c.g},${c.b},0.3)`);
   r.style.setProperty('--accent-glow3',   `rgba(${c.r},${c.g},${c.b},0.25)`);
@@ -1661,8 +1817,7 @@ function applyAccent(key) {
   r.style.setProperty('--accent-border',  `rgba(${c.r},${c.g},${c.b},0.3)`);
   r.style.setProperty('--accent-border2', `rgba(${c.r},${c.g},${c.b},0.25)`);
   r.style.setProperty('--accent-border3', `rgba(${c.r},${c.g},${c.b},0.2)`);
-  // Also update chart gradient fill color via a data attribute read by drawChart
-  document.documentElement.dataset.accentHex = c.hex;
+  document.documentElement.dataset.accentHex = hex;
   document.documentElement.dataset.accentR = c.r;
   document.documentElement.dataset.accentG = c.g;
   document.documentElement.dataset.accentB = c.b;
@@ -1671,21 +1826,24 @@ function applyAccent(key) {
 function setTheme(mode) {
   if (mode === 'light') document.body.classList.add('light');
   else document.body.classList.remove('light');
-  localStorage.setItem('ironlog_theme', mode);
+  localStorage.setItem('workouttracker_theme', mode);
+  // Reapply accent so light/dark variant of yellow is used
+  const accent = localStorage.getItem('workouttracker_accent') || 'default';
+  applyAccent(accent);
   syncDisplayUI();
 }
 
 function setAccent(key) {
   applyAccent(key);
-  localStorage.setItem('ironlog_accent', key);
+  localStorage.setItem('workouttracker_accent', key);
   syncDisplayUI();
 }
 
 function syncDisplayUI() {
-  const theme = localStorage.getItem('ironlog_theme') || 'dark';
+  const theme = localStorage.getItem('workouttracker_theme') || 'dark';
   document.getElementById('theme-dark').classList.toggle('active', theme === 'dark');
   document.getElementById('theme-light').classList.toggle('active', theme === 'light');
-  const accent = localStorage.getItem('ironlog_accent') || 'default';
+  const accent = localStorage.getItem('workouttracker_accent') || 'default';
   document.querySelectorAll('.color-swatch').forEach(s => {
     s.classList.toggle('active', s.dataset.color === accent);
   });
@@ -1693,24 +1851,129 @@ function syncDisplayUI() {
 
 document.getElementById('options-back').addEventListener('click', () => {
   // Go back to whichever main tab was last active, default home
-  const prev = localStorage.getItem('ironlog_last_screen') || 'home';
+  const prev = localStorage.getItem('workouttracker_last_screen') || 'home';
   showScreen(prev);
 });
 document.getElementById('display-back').addEventListener('click', () => showScreen('options'));
+document.getElementById('credits-back').addEventListener('click', () => showScreen('options'));
 
 // Track last visited main screen for back button
 ['home','cal','stats'].forEach(id => {
   document.querySelector(`.nav-btn[data-screen="${id}"]`).addEventListener('click', () => {
-    localStorage.setItem('ironlog_last_screen', id);
+    localStorage.setItem('workouttracker_last_screen', id);
   });
 });
 
 // Load saved preferences
 (function initPrefs() {
-  const theme = localStorage.getItem('ironlog_theme') || 'dark';
+  const theme = localStorage.getItem('workouttracker_theme') || 'dark';
   if (theme === 'light') document.body.classList.add('light');
-  const accent = localStorage.getItem('ironlog_accent') || 'default';
+  const accent = localStorage.getItem('workouttracker_accent') || 'default';
   applyAccent(accent);
+})();
+
+// ══════════════════════════════════
+// SWIPE TO CLOSE SHEETS
+// ══════════════════════════════════
+(function initSwipeToClose() {
+  // Overlays that can be dismissed by swiping down the handle
+  const overlayIds = ['overlay-new', 'overlay-detail', 'overlay-edit', 'overlay-confirm', 'overlay-merge'];
+
+  // Which overlay to reopen when edit/confirm are swiped away
+  const swipeBackTo = {
+    'overlay-confirm': 'overlay-detail',
+    'overlay-edit': null // just close, don't reopen detail
+  };
+
+  overlayIds.forEach(overlayId => {
+    const overlay = document.getElementById(overlayId);
+    if (!overlay) return;
+    const sheet = overlay.querySelector('.sheet');
+    const handle = overlay.querySelector('.sheet-handle');
+    if (!sheet || !handle) return;
+
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+
+    function onStart(e) {
+      if (!overlay.classList.contains('open')) return;
+      startY = e.touches ? e.touches[0].clientY : e.clientY;
+      currentY = startY;
+      isDragging = true;
+      sheet.classList.add('dragging');
+    }
+
+    function onMove(e) {
+      if (!isDragging) return;
+      currentY = e.touches ? e.touches[0].clientY : e.clientY;
+      const delta = Math.max(0, currentY - startY); // only downward
+      sheet.style.transform = `translateY(${delta}px)`;
+      // Fade overlay background as user drags
+      const progress = Math.min(delta / 300, 1);
+      overlay.style.background = `rgba(0,0,0,${0.85 * (1 - progress * 0.6)})`;
+      e.preventDefault();
+    }
+
+    function onEnd() {
+      if (!isDragging) return;
+      isDragging = false;
+      sheet.classList.remove('dragging');
+      const delta = currentY - startY;
+
+      if (delta > 120) {
+        // Snap closed
+        sheet.style.transform = 'translateY(100%)';
+        overlay.style.background = '';
+        setTimeout(() => {
+          sheet.style.transform = '';
+
+          // For new session overlay: treat swipe as "finish" not "cancel"
+          if (overlayId === 'overlay-new') {
+            const date = document.getElementById('session-date').value;
+            if (date && currentSession.exercises.length > 0) {
+              // Same logic as btn-finish-session
+              currentSession.date = date;
+              currentSession.name = document.getElementById('session-name').value.trim();
+              const existing = DB.getSessions().find(s => s.date === date);
+              if (existing) {
+                closeOverlay('overlay-new');
+                document.getElementById('merge-info').textContent =
+                  `Un entraînement ${existing.name ? '"' + existing.name + '"' : 'sans titre'} existe déjà le ${new Date(date + 'T12:00:00').toLocaleDateString('fr-FR', {day:'numeric', month:'long'})}. Les exercices seront fusionnés.`;
+                openOverlay('overlay-merge');
+              } else {
+                DB.addSession({...currentSession});
+                closeOverlay('overlay-new');
+                renderHome();
+              }
+            } else {
+              // Nothing to save — just close
+              closeOverlay(overlayId);
+            }
+            return;
+          }
+
+          closeOverlay(overlayId);
+          // Reopen parent overlay if needed
+          const backTo = swipeBackTo[overlayId];
+          if (backTo) openOverlay(backTo);
+        }, 280);
+      } else {
+        // Snap back open
+        sheet.style.transform = '';
+        overlay.style.background = '';
+      }
+    }
+
+    // Attach to handle for precise control
+    handle.addEventListener('touchstart', onStart, { passive: true });
+    handle.addEventListener('touchmove', onMove, { passive: false });
+    handle.addEventListener('touchend', onEnd);
+    // Also support mouse for desktop preview
+    handle.addEventListener('mousedown', onStart);
+    document.addEventListener('mousemove', e => { if (isDragging) onMove(e); });
+    document.addEventListener('mouseup', e => { if (isDragging) onEnd(); });
+  });
 })();
 
 // ══════════════════════════════════
