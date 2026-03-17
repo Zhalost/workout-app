@@ -187,6 +187,36 @@
   .pip-timer.done .pip-time { color: #4cff72; }
   .pip-timer.done { animation: pip-done-pulse 0.5s ease-in-out 3; }
   @keyframes pip-done-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+  /* ── TOGGLE SWITCH ── */
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 20px;
+  }
+  .toggle-label { font-size: 15px; font-weight: 500; color: var(--text); }
+  .toggle-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .toggle-switch {
+    position: relative; width: 50px; height: 28px; flex-shrink: 0;
+  }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-track {
+    position: absolute; inset: 0; border-radius: 99px;
+    background: var(--bg3); border: 1.5px solid var(--border);
+    cursor: pointer; transition: background 0.25s, border-color 0.25s;
+  }
+  .toggle-track::after {
+    content: ''; position: absolute;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--text3); top: 3px; left: 3px;
+    transition: transform 0.25s, background 0.25s;
+  }
+  .toggle-switch input:checked + .toggle-track {
+    background: var(--accent-tint); border-color: var(--accent);
+  }
+  .toggle-switch input:checked + .toggle-track::after {
+    background: var(--accent); transform: translateX(22px);
+  }
+
   .options-list { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
   .options-row {
     background: var(--card); border: 1px solid var(--border);
@@ -753,9 +783,21 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- ══ SCREEN: CREDITS ══ -->
+    <div class="display-section" style="padding-top:24px">
+      <div class="display-section-title">Notifications</div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Message d'encouragement</div>
+          <div class="toggle-sub">Pop-up après chaque séance terminée</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-shrimp" checked onchange="setShrimpToggle(this.checked)">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+  </div>
   <div class="screen" id="screen-credits">
     <div class="topbar">
       <div style="display:flex;align-items:center;gap:10px">
@@ -1063,6 +1105,21 @@
 
       <button class="btn btn-primary" id="btn-save-overlay-timer">Enregistrer la durée</button>
     </div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: SHRIMP CELEBRATION ══ -->
+<div class="overlay" id="overlay-shrimp">
+  <div class="sheet" style="text-align:center">
+    <div class="sheet-handle"></div>
+    <div style="font-size:80px;margin:10px 0 4px;line-height:1">🦐</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--accent);padding:0 24px;line-height:1.3;margin-bottom:8px">
+      Bravo ma crevette,<br>une séance de plus<br>pour devenir énorme !
+    </div>
+    <div style="height:16px"></div>
+    <button class="btn btn-primary" id="btn-shrimp-close" style="margin-bottom:8px">Fermer</button>
+    <button class="btn btn-outline" id="btn-shrimp-never" style="font-size:13px;color:var(--text3)">Ne plus afficher ce message</button>
     <div style="height:16px"></div>
   </div>
 </div>
@@ -1587,7 +1644,7 @@ document.getElementById('btn-finish-session').addEventListener('click', () => {
 
   DB.addSession({...currentSession});
   closeOverlay('overlay-new');
-  renderHome();
+  maybeShrimpPopup();
 });
 
 document.getElementById('btn-cancel-session').addEventListener('click', () => closeOverlay('overlay-new'));
@@ -1596,7 +1653,7 @@ document.getElementById('btn-confirm-merge').addEventListener('click', () => {
   DB.addSession({...currentSession});
   closeOverlay('overlay-merge');
   closeOverlay('overlay-new');
-  renderHome();
+  maybeShrimpPopup();
 });
 
 document.getElementById('btn-cancel-merge').addEventListener('click', () => {
@@ -2286,6 +2343,20 @@ function setAccent(key) {
   syncDisplayUI();
 }
 
+function setShrimpToggle(enabled) {
+  if (enabled) {
+    localStorage.removeItem('wt_no_shrimp');
+  } else {
+    localStorage.setItem('wt_no_shrimp', '1');
+  }
+  syncShrimpToggle();
+}
+
+function syncShrimpToggle() {
+  const el = document.getElementById('toggle-shrimp');
+  if (el) el.checked = localStorage.getItem('wt_no_shrimp') !== '1';
+}
+
 function syncDisplayUI() {
   const theme = localStorage.getItem('workouttracker_theme') || 'dark';
   document.getElementById('theme-dark').classList.toggle('active', theme === 'dark');
@@ -2294,6 +2365,7 @@ function syncDisplayUI() {
   document.querySelectorAll('.color-swatch').forEach(s => {
     s.classList.toggle('active', s.dataset.color === accent);
   });
+  syncShrimpToggle();
 }
 
 document.getElementById('options-back').addEventListener('click', () => {
@@ -2509,12 +2581,30 @@ document.getElementById('overlay-timer-config').addEventListener('transitionend'
   }
 });
 
+// ── Shrimp celebration popup ──
+function maybeShrimpPopup() {
+  if (localStorage.getItem('wt_no_shrimp') === '1') return;
+  openOverlay('overlay-shrimp');
+}
+
+document.getElementById('btn-shrimp-close').addEventListener('click', () => {
+  closeOverlay('overlay-shrimp');
+  renderHome();
+});
+
+document.getElementById('btn-shrimp-never').addEventListener('click', () => {
+  localStorage.setItem('wt_no_shrimp', '1');
+  syncShrimpToggle();
+  closeOverlay('overlay-shrimp');
+  renderHome();
+});
+
 // ══════════════════════════════════
 // SWIPE TO CLOSE SHEETS
 // ══════════════════════════════════
 (function initSwipeToClose() {
   // Overlays that can be dismissed by swiping down the handle
-  const overlayIds = ['overlay-new', 'overlay-detail', 'overlay-edit', 'overlay-confirm', 'overlay-merge', 'overlay-confirm-exo', 'overlay-timer-config'];
+  const overlayIds = ['overlay-new', 'overlay-detail', 'overlay-edit', 'overlay-confirm', 'overlay-merge', 'overlay-confirm-exo', 'overlay-timer-config', 'overlay-shrimp'];
 
   // Which overlay to reopen when edit/confirm are swiped away
   const swipeBackTo = {
@@ -2581,7 +2671,7 @@ document.getElementById('overlay-timer-config').addEventListener('transitionend'
               } else {
                 DB.addSession({...currentSession});
                 closeOverlay('overlay-new');
-                renderHome();
+                maybeShrimpPopup();
               }
             } else {
               // Nothing to save — just close
@@ -2772,6 +2862,7 @@ renderHome();
 document.getElementById('fab').style.display = 'flex';
 updateTimerConfigDisplay();
 updateSessionTimerBar();
+syncShrimpToggle();
 </script>
 </body>
 </html>
