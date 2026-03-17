@@ -2684,6 +2684,8 @@ document.getElementById('btn-shrimp-never').addEventListener('click', () => {
           // Reopen parent overlay if needed
           const backTo = swipeBackTo[overlayId];
           if (backTo) openOverlay(backTo);
+          // If shrimp popup was swiped away, refresh home
+          if (overlayId === 'overlay-shrimp') renderHome();
         }, 280);
       } else {
         // Snap back open
