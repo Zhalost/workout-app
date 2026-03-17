@@ -59,7 +59,134 @@
   body.light .autocomplete-item.highlighted { background: var(--bg3); }
   body.light select.form-input { background-color: var(--bg3); }
 
-  /* ── OPTIONS SCREEN ── */
+  /* ── SESSION TIMER BAR ── */
+  #session-timer-bar {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    transition: background 0.3s;
+  }
+  #session-timer-bar-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg3); border-radius: 14px; padding: 10px 16px;
+    border: 1px solid var(--border);
+    transition: border-color 0.3s;
+  }
+  .stb-btn-play, .stb-btn-stop {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: none; cursor: pointer;
+    font-size: 18px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.15s, opacity 0.15s;
+    flex-shrink: 0;
+  }
+  .stb-btn-play {
+    background: var(--accent); color: #000;
+    box-shadow: 0 2px 10px var(--accent-glow2);
+  }
+  .stb-btn-stop {
+    background: var(--accent2); color: #fff;
+  }
+  .stb-btn-play:active, .stb-btn-stop:active { transform: scale(0.92); opacity: 0.85; }
+  .stb-config-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 2px solid var(--accent); background: var(--accent-tint2);
+    color: var(--accent); font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: opacity 0.15s, transform 0.15s;
+  }
+  .stb-config-btn:active { opacity: 0.7; transform: scale(0.92); }
+  /* Blink animation when done */
+  @keyframes stb-blink {
+    0%, 100% { background: var(--bg3); border-color: var(--border); }
+    50% { background: rgba(76,255,114,0.15); border-color: #4cff72; }
+  }
+  #session-timer-bar.done #session-timer-bar-inner {
+    animation: stb-blink 0.6s ease-in-out infinite;
+  }
+  #session-timer-bar.done #stb-ring { stroke: #4cff72; }
+  #session-timer-bar.done #stb-time { color: #4cff72; }
+
+  .topbar-chrono-btn {
+    background: none; border: none;
+    color: var(--accent); font-size: 22px;
+    cursor: pointer; padding: 6px;
+    display: flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px;
+    transition: opacity 0.2s;
+  }
+  .topbar-chrono-btn:active { opacity: 0.6; }
+
+  /* ── TIMER PRESETS ── */
+  .timer-preset {
+    background: var(--bg3); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 12px 6px; text-align: center;
+    font-size: 13px; font-weight: 600; color: var(--text2);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .timer-preset:active, .timer-preset.active {
+    border-color: var(--accent); color: var(--accent);
+    background: var(--accent-tint2);
+  }
+
+  /* ── TIMER UNIT INPUTS ── */
+  .timer-unit-input {
+    width: 64px; height: 56px; text-align: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 36px;
+    background: var(--bg3); border: 1.5px solid var(--border);
+    border-radius: 12px; color: var(--text); outline: none;
+    -moz-appearance: textfield;
+  }
+  .timer-unit-input::-webkit-outer-spin-button,
+  .timer-unit-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .timer-unit-input:focus { border-color: var(--accent); }
+  .timer-adj-btn {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; width: 36px; height: 28px;
+    color: var(--text2); font-size: 12px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .timer-adj-btn:active { border-color: var(--accent); color: var(--accent); }
+
+  /* ── PIP TIMER BUBBLE ── */
+  .pip-timer {
+    position: fixed; z-index: 999;
+    width: 64px; height: 64px;
+    cursor: pointer; user-select: none;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+    touch-action: none;
+  }
+  .pip-ring {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    transform: rotate(-90deg);
+  }
+  .pip-ring-bg {
+    fill: none; stroke: var(--bg3); stroke-width: 4;
+  }
+  .pip-ring-fill {
+    fill: none; stroke: var(--accent); stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 150.8;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.5s linear, stroke 0.3s;
+  }
+  .pip-inner {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: var(--bg2); border-radius: 50%;
+    margin: 5px;
+  }
+  .pip-time {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px; letter-spacing: 1px;
+    color: var(--text); line-height: 1;
+  }
+  .pip-timer.done .pip-ring-fill { stroke: #4cff72; }
+  .pip-timer.done .pip-time { color: #4cff72; }
+  .pip-timer.done { animation: pip-done-pulse 0.5s ease-in-out 3; }
+  @keyframes pip-done-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
   .options-list { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
   .options-row {
     background: var(--card); border: 1px solid var(--border);
@@ -277,12 +404,18 @@
   .exo-list { padding: 0 20px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
   .exo-item {
     background: var(--bg3); border-radius: 12px; border: 1px solid var(--border);
-    padding: 12px 14px;
+    padding: 10px 12px; margin: 0 16px 8px;
   }
   .exo-item-header { display: flex; justify-content: space-between; align-items: center; }
   .exo-item-name { font-size: 14px; font-weight: 500; }
   .exo-item-detail { font-size: 12px; color: var(--text2); margin-top: 2px; }
   .exo-item-del { background: none; border: none; color: var(--text3); font-size: 18px; cursor: pointer; padding: 4px; }
+  .exo-item-edit-btn {
+    background: none; border: none; color: var(--accent); font-size: 15px;
+    cursor: pointer; padding: 4px 6px; opacity: 0.8; transition: opacity 0.15s;
+  }
+  .exo-item-edit-btn:active { opacity: 1; }
+  .exo-item-actions { display: flex; align-items: center; gap: 10px; }
   .exo-item-sets { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
   .exo-item-set-row { font-size: 12px; color: var(--text2); padding: 4px 8px; background: var(--bg2); border-radius: 7px; }
   .exo-item-set-row .set-comment { font-style: italic; color: var(--text3); margin-top: 1px; }
@@ -292,6 +425,16 @@
   .set-builder-row {
     background: var(--bg3); border-radius: 12px; border: 1px solid var(--border);
     padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .set-row-new {
+    border-color: var(--accent);
+    background: var(--accent-tint4);
+    box-shadow: 0 0 0 1px var(--accent-border3);
+  }
+  .set-row-new .set-mini-input,
+  .set-row-new .set-comment-input {
+    border-color: var(--accent-border2);
+    background: var(--bg2);
   }
   .set-builder-row-top { display: flex; align-items: center; gap: 8px; }
   .set-num { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--accent); min-width: 28px; }
@@ -317,17 +460,17 @@
 
   /* ── ADD SET BOTTOM BUTTON ── */
   .btn-add-set-bottom {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    margin: 10px 20px 16px; padding: 18px 20px;
+    display: inline-flex; align-items: center; gap: 6px;
+    margin: 8px 20px 12px; padding: 10px 16px;
     background: var(--accent-tint4); border: 2px dashed var(--accent-border);
-    border-radius: 14px; cursor: pointer;
-    font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700;
+    border-radius: 12px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700;
     color: var(--accent); letter-spacing: 0.3px;
     transition: border-color 0.2s, background 0.2s, transform 0.12s;
-    width: calc(100% - 40px);
+    width: auto;
   }
   .btn-add-set-bottom:active { background: rgba(232,255,60,0.1); border-color: var(--accent); transform: scale(0.98); }
-  .btn-add-set-bottom .plus-icon { font-size: 22px; line-height: 1; }
+  .btn-add-set-bottom .plus-icon { font-size: 16px; line-height: 1; }
 
   /* ── AUTOCOMPLETE ── */
   .exo-name-wrap { position: relative; }
@@ -470,7 +613,10 @@
         <div class="topbar-sub">par Zhalost</div>
         <div class="topbar-sub" id="home-sub" style="margin-top:1px"></div>
       </div>
-      <button class="topbar-options-btn" onclick="showScreen('options')">⚙️</button>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="topbar-chrono-btn" id="btn-open-timer" onclick="showScreen('timer')">⏱</button>
+        <button class="topbar-options-btn" onclick="showScreen('options')">⚙️</button>
+      </div>
     </div>
     <div id="home-content"></div>
   </div>
@@ -543,13 +689,19 @@
         <span class="options-row-arrow">›</span>
       </div>
     </div>
-    <div style="position:absolute;bottom:calc(52px + var(--safe-bottom));left:0;right:0;padding:0 16px">
+    <div style="position:absolute;bottom:calc(160px + var(--safe-bottom));left:0;right:0;padding:0 16px">
+      <div class="options-row" onclick="showScreen('transfer')">
+        <span class="options-row-label">Transfert de données</span>
+        <span class="options-row-arrow">›</span>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:calc(96px + var(--safe-bottom));left:0;right:0;padding:0 16px">
       <div class="options-row" onclick="showScreen('credits')">
         <span class="options-row-label">Crédits</span>
         <span class="options-row-arrow">›</span>
       </div>
     </div>
-    <div style="position:absolute;bottom:calc(20px + var(--safe-bottom));left:0;right:0;text-align:center;font-size:11px;color:var(--text3);letter-spacing:0.5px;">Version 1.1</div>
+    <div style="position:absolute;bottom:calc(20px + var(--safe-bottom));left:0;right:0;text-align:center;font-size:11px;color:var(--text3);letter-spacing:0.5px;">Version 1.2</div>
   </div>
 
   <!-- ══ SCREEN: DISPLAY ══ -->
@@ -626,6 +778,147 @@
     </div>
   </div>
 
+  <!-- ══ SCREEN: TIMER CONFIG ══ -->
+  <div class="screen" id="screen-timer">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="topbar-back" id="timer-back">‹</button>
+        <div>
+          <div class="topbar-title">TEMPS DE REPOS</div>
+          <div class="topbar-sub" style="display:none">Chronomètre de série</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:24px 20px;display:flex;flex-direction:column;gap:24px">
+
+      <!-- Current rest display -->
+      <div style="text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:72px;letter-spacing:4px;color:var(--accent);line-height:1" id="timer-display">01:30</div>
+        <div style="font-size:15px;font-weight:600;color:var(--text2);margin-top:6px">Durée de repos</div>
+      </div>
+
+      <!-- Presets -->
+      <div>
+        <div style="font-size:15px;font-weight:600;color:var(--text2);margin-bottom:12px">Durée rapide</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px" id="timer-presets">
+          <div class="timer-preset" data-sec="30">30s</div>
+          <div class="timer-preset" data-sec="60">1 min</div>
+          <div class="timer-preset" data-sec="90">1:30</div>
+          <div class="timer-preset" data-sec="120">2 min</div>
+          <div class="timer-preset" data-sec="150">2:30</div>
+          <div class="timer-preset" data-sec="180">3 min</div>
+          <div class="timer-preset" data-sec="240">4 min</div>
+          <div class="timer-preset" data-sec="300">5 min</div>
+        </div>
+      </div>
+
+      <!-- Custom input -->
+      <div>
+        <div style="font-size:15px;font-weight:600;color:var(--text2);margin-bottom:12px">Durée personnalisée</div>
+        <div style="display:flex;align-items:center;gap:12px;justify-content:center">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <button class="timer-adj-btn" onclick="adjustTimer('min',1)">▲</button>
+            <input type="number" id="timer-min" class="timer-unit-input" min="0" max="59" value="1">
+            <div style="font-size:11px;color:var(--text3)">min</div>
+            <button class="timer-adj-btn" onclick="adjustTimer('min',-1)">▼</button>
+          </div>
+          <div style="font-size:32px;color:var(--text3);margin-bottom:20px">:</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <button class="timer-adj-btn" onclick="adjustTimer('sec',10)">▲</button>
+            <input type="number" id="timer-sec" class="timer-unit-input" min="0" max="59" value="30">
+            <div style="font-size:11px;color:var(--text3)">sec</div>
+            <button class="timer-adj-btn" onclick="adjustTimer('sec',-10)">▼</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Validate button -->
+      <button class="btn btn-primary" id="btn-start-timer-config">Enregistrer la durée</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: TRANSFER ══ -->
+  <div class="screen" id="screen-transfer">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="topbar-back" id="transfer-back">‹</button>
+        <div>
+          <div class="topbar-title">TRANSFERT</div>
+          <div class="topbar-sub">Sauvegarde &amp; restauration</div>
+        </div>
+      </div>
+    </div>
+    <div class="options-list">
+      <div class="options-row" onclick="showScreen('export')">
+        <div>
+          <div class="options-row-label">Télécharger mes données</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:3px">Copier le code de sauvegarde</div>
+        </div>
+        <span class="options-row-arrow">›</span>
+      </div>
+      <div class="options-row" onclick="showScreen('import')">
+        <div>
+          <div class="options-row-label">Insérer mes données</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:3px">Restaurer depuis un code</div>
+        </div>
+        <span class="options-row-arrow">›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: EXPORT ══ -->
+  <div class="screen" id="screen-export">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="topbar-back" id="export-back">‹</button>
+        <div>
+          <div class="topbar-title">MES DONNÉES</div>
+          <div class="topbar-sub">Code de sauvegarde</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">
+        Copiez ce code et conservez-le. Vous pourrez le coller dans "Insérer mes données" sur un autre appareil.
+      </div>
+      <div id="export-code-box" style="
+        background:var(--bg3);border:1px solid var(--border);border-radius:14px;
+        padding:14px;font-family:monospace;font-size:12px;color:var(--text2);
+        word-break:break-all;line-height:1.6;max-height:40vh;overflow-y:auto;
+        user-select:all;-webkit-user-select:all;
+      "></div>
+      <button class="btn btn-primary" id="btn-copy-export">Copier le code</button>
+      <div id="export-copy-confirm" style="display:none;text-align:center;font-size:13px;color:var(--accent)">
+        Code copié !
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: IMPORT ══ -->
+  <div class="screen" id="screen-import">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="topbar-back" id="import-back">‹</button>
+        <div>
+          <div class="topbar-title">IMPORTER</div>
+          <div class="topbar-sub">Restaurer mes données</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">
+        Collez votre code de sauvegarde ci-dessous. Les nouvelles données seront <strong style="color:var(--text)">ajoutées</strong> à vos séances existantes.
+      </div>
+      <textarea id="import-input" style="
+        width:100%;min-height:160px;background:var(--bg3);border:1.5px solid var(--border);
+        border-radius:14px;padding:14px;font-family:monospace;font-size:12px;
+        color:var(--text);resize:vertical;outline:none;line-height:1.6;
+      " placeholder="Collez votre code ici..."></textarea>
+      <button class="btn btn-primary" id="btn-import-data">Importer les données</button>
+      <div id="import-result" style="display:none;text-align:center;font-size:13px;border-radius:10px;padding:10px 14px;"></div>
+    </div>
+  </div>
+
   <!-- ══ BOTTOM NAV ══ -->
   <nav class="bottom-nav">
     <button class="nav-btn active" data-screen="home">
@@ -648,6 +941,25 @@
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">NOUVELLE SÉANCE</div>
+
+    <!-- ── Sticky rest timer bar ── -->
+    <div id="session-timer-bar">
+      <div id="session-timer-bar-inner">
+        <div style="display:flex;align-items:center;gap:10px">
+          <svg width="36" height="36" viewBox="0 0 36 36" style="flex-shrink:0;transform:rotate(-90deg)">
+            <circle cx="18" cy="18" r="14" fill="none" stroke="var(--bg3)" stroke-width="3"/>
+            <circle id="stb-ring" cx="18" cy="18" r="14" fill="none" stroke="var(--accent)" stroke-width="3"
+              stroke-linecap="round" stroke-dasharray="87.96" stroke-dashoffset="0"/>
+          </svg>
+          <div>
+            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px">Repos</div>
+            <div id="stb-time" style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--text);line-height:1">1:30</div>
+          </div>
+          <button id="stb-config-btn" class="stb-config-btn" onclick="openOverlay('overlay-timer-config')">⏱</button>
+        </div>
+        <button id="stb-btn" class="stb-btn-play">▶</button>
+      </div>
+    </div>
     
     <div class="form-group">
       <label class="form-label">Date</label>
@@ -681,7 +993,7 @@
     <div class="set-builder" id="set-builder"></div>
     <button class="btn-add-set-bottom" id="btn-add-set"><span class="plus-icon">＋</span> Ajouter une série</button>
 
-    <button class="btn btn-outline" id="btn-add-exo">＋ Ajouter cet exercice</button>
+    <button class="btn btn-outline" id="btn-add-exo">＋ Ajouter un exercice</button>
     <div style="height:12px"></div>
     <button class="btn btn-primary" id="btn-finish-session">Terminer la séance</button>
     <button class="btn btn-danger" id="btn-cancel-session">Annuler</button>
@@ -700,6 +1012,71 @@
     <div style="padding: 0 20px 20px;" id="detail-exos"></div>
     <button class="btn btn-edit" id="btn-edit-session">Modifier la séance</button>
     <button class="btn btn-danger" id="btn-delete-session">Supprimer la séance</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: TIMER CONFIG (from session) ══ -->
+<div class="overlay" id="overlay-timer-config">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">TEMPS DE REPOS</div>
+    <div style="padding:0 20px 16px;display:flex;flex-direction:column;gap:20px">
+
+      <div style="text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:4px;color:var(--accent);line-height:1" id="otimer-display">01:30</div>
+        <div style="font-size:15px;font-weight:600;color:var(--text2);margin-top:6px">Durée de repos</div>
+      </div>
+
+      <div>
+        <div style="font-size:15px;font-weight:600;color:var(--text2);margin-bottom:12px">Durée rapide</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px" id="otimer-presets">
+          <div class="timer-preset" data-sec="30">30s</div>
+          <div class="timer-preset" data-sec="60">1 min</div>
+          <div class="timer-preset" data-sec="90">1:30</div>
+          <div class="timer-preset" data-sec="120">2 min</div>
+          <div class="timer-preset" data-sec="150">2:30</div>
+          <div class="timer-preset" data-sec="180">3 min</div>
+          <div class="timer-preset" data-sec="240">4 min</div>
+          <div class="timer-preset" data-sec="300">5 min</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:15px;font-weight:600;color:var(--text2);margin-bottom:12px">Durée personnalisée</div>
+        <div style="display:flex;align-items:center;gap:12px;justify-content:center">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <button class="timer-adj-btn" onclick="adjustOverlayTimer('min',1)">▲</button>
+            <input type="number" id="otimer-min" class="timer-unit-input" min="0" max="59" value="1">
+            <div style="font-size:11px;color:var(--text3)">min</div>
+            <button class="timer-adj-btn" onclick="adjustOverlayTimer('min',-1)">▼</button>
+          </div>
+          <div style="font-size:32px;color:var(--text3);margin-bottom:20px">:</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <button class="timer-adj-btn" onclick="adjustOverlayTimer('sec',10)">▲</button>
+            <input type="number" id="otimer-sec" class="timer-unit-input" min="0" max="59" value="30">
+            <div style="font-size:11px;color:var(--text3)">sec</div>
+            <button class="timer-adj-btn" onclick="adjustOverlayTimer('sec',-10)">▼</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-save-overlay-timer">Enregistrer la durée</button>
+    </div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: CONFIRM DELETE EXO ══ -->
+<div class="overlay" id="overlay-confirm-exo">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">SUPPRIMER ?</div>
+    <div style="padding: 0 20px 20px; font-size:14px; color:var(--text2); line-height:1.6;" id="confirm-exo-text">
+      Supprimer cet exercice et toutes ses séries ?
+    </div>
+    <button class="btn btn-danger" id="btn-confirm-exo-delete">Confirmer la suppression</button>
+    <button class="btn btn-outline" id="btn-cancel-exo-delete">Annuler</button>
     <div style="height:16px"></div>
   </div>
 </div>
@@ -761,7 +1138,7 @@
     </div>
     <div class="set-builder" id="edit-set-builder"></div>
     <button class="btn-add-set-bottom" id="edit-btn-add-set"><span class="plus-icon">＋</span> Ajouter une série</button>
-    <button class="btn btn-outline" id="edit-btn-add-exo">＋ Ajouter cet exercice</button>
+    <button class="btn btn-outline" id="edit-btn-add-exo">＋ Ajouter un exercice</button>
     <div style="height:12px"></div>
     <button class="btn btn-primary" id="edit-btn-save">Enregistrer les modifications</button>
     <button class="btn btn-danger" id="edit-btn-cancel">Annuler</button>
@@ -895,6 +1272,17 @@ function showScreen(id) {
   if (id === 'cal') renderCalendar();
   if (id === 'stats') renderStats();
   if (id === 'display') syncDisplayUI();
+  if (id === 'timer') updateTimerConfigDisplay();
+  if (id === 'export') {
+    const code = encodeExportData();
+    const box = document.getElementById('export-code-box');
+    box.textContent = code || '(Aucune donnée enregistrée)';
+    document.getElementById('export-copy-confirm').style.display = 'none';
+  }
+  if (id === 'import') {
+    document.getElementById('import-input').value = '';
+    document.getElementById('import-result').style.display = 'none';
+  }
 }
 
 document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -1021,8 +1409,9 @@ function renderSetBuilder() {
   const builder = document.getElementById('set-builder');
   document.getElementById('sets-count-label').textContent = currentSets.length;
   if (currentSets.length === 0) { builder.innerHTML = ''; return; }
+  const lastIdx = currentSets.length - 1;
   builder.innerHTML = currentSets.map((s, i) => `
-    <div class="set-builder-row">
+    <div class="set-builder-row${i === lastIdx ? ' set-row-new' : ''}">
       <div class="set-builder-row-top">
         <span class="set-num">S${i+1}</span>
         <input type="number" class="set-mini-input" placeholder="Reps" min="1"
@@ -1042,11 +1431,8 @@ function removeSet(i) {
 }
 
 document.getElementById('btn-add-set').addEventListener('click', () => {
-  // Pre-fill with last set's values for convenience
-  const last = currentSets[currentSets.length - 1];
-  currentSets.push({ reps: last?.reps||0, weight: last?.weight||0, comment: '' });
+  currentSets.push({ reps: 0, weight: 0, comment: '' });
   renderSetBuilder();
-  // Scroll to bottom of sheet
   setTimeout(() => {
     const sheet = document.querySelector('#overlay-new .sheet');
     sheet.scrollTop = sheet.scrollHeight;
@@ -1085,9 +1471,15 @@ document.getElementById('btn-add-exo').addEventListener('click', () => {
     currentSession.exercises.push({ name, sets: 1, reps: s.reps||0, weight: s.weight||0, comment: s.comment||'' });
   });
   document.getElementById('exo-name').value = '';
-  currentSets = [];
+  // Auto-add one empty set ready for the next exercise
+  currentSets = [{ reps: 0, weight: 0, comment: '' }];
   renderSetBuilder();
   renderNewExoList();
+  // Scroll to the new set
+  setTimeout(() => {
+    const sheet = document.querySelector('#overlay-new .sheet');
+    sheet.scrollTop = sheet.scrollHeight;
+  }, 50);
 });
 
 function flashInput(id) {
@@ -1114,21 +1506,60 @@ function renderNewExoList() {
     groups[seen[e.name]].sets.push({ ...e, idx });
   });
   list.innerHTML = groups.map(g => {
-    const firstIdx = g.sets[0].idx;
     const setsHtml = g.sets.map((s,i) => `<div class="exo-item-set-row">S${i+1}: <strong>${s.reps} reps</strong>${s.weight ? ` @ <strong>${s.weight}kg</strong>` : ''}${s.comment ? `<div class="set-comment">${s.comment}</div>` : ''}</div>`).join('');
+    const safeName = g.name.replace(/'/g, "\\'");
     return `<div class="exo-item">
       <div class="exo-item-header">
         <div><div class="exo-item-name">${g.name}</div><div class="exo-item-detail">${g.sets.length} série${g.sets.length>1?'s':''}</div></div>
-        <button class="exo-item-del" onclick="removeExoGroup('${g.name}')">✕</button>
+        <div class="exo-item-actions">
+          <button class="exo-item-edit-btn" onclick="editExoGroup('${safeName}')" title="Modifier">✏️</button>
+          <button class="exo-item-del" onclick="removeExoGroup('${safeName}')">✕</button>
+        </div>
       </div>
       <div class="exo-item-sets">${setsHtml}</div>
     </div>`;
   }).join('');
 }
 
+let pendingDeleteExo = null;
+
 function removeExoGroup(name) {
+  pendingDeleteExo = name;
+  const sets = currentSession.exercises.filter(e => e.name === name);
+  document.getElementById('confirm-exo-text').textContent =
+    `Supprimer "${name}" et ses ${sets.length} série${sets.length > 1 ? 's' : ''} ?`;
+  openOverlay('overlay-confirm-exo');
+}
+
+function editExoGroup(name) {
+  // If there's an exercise currently being edited (name field filled + sets present), save it first
+  const currentName = document.getElementById('exo-name').value.trim();
+  if (currentName && currentSets.length > 0 && currentSets.some(s => s.reps > 0)) {
+    // Save the in-progress exercise before switching
+    currentSets.forEach(s => {
+      currentSession.exercises.push({ name: currentName, sets: 1, reps: s.reps || 0, weight: s.weight || 0, comment: s.comment || '' });
+    });
+  }
+
+  // Load the target exercise's sets back into the builder
+  const sets = currentSession.exercises.filter(e => e.name === name);
+  if (!sets.length) return;
+
+  // Remove from session (will be re-added when user clicks 'Ajouter un exercice')
   currentSession.exercises = currentSession.exercises.filter(e => e.name !== name);
+
+  // Populate the exo name field and set builder
+  document.getElementById('exo-name').value = name;
+  currentSets = sets.map(s => ({ reps: s.reps || 0, weight: s.weight || 0, comment: s.comment || '' }));
+  renderSetBuilder();
   renderNewExoList();
+
+  // Scroll up to the exercise name field
+  setTimeout(() => {
+    const nameInput = document.getElementById('exo-name');
+    nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    nameInput.focus();
+  }, 80);
 }
 
 document.getElementById('btn-finish-session').addEventListener('click', () => {
@@ -1170,6 +1601,22 @@ document.getElementById('btn-confirm-merge').addEventListener('click', () => {
 
 document.getElementById('btn-cancel-merge').addEventListener('click', () => {
   closeOverlay('overlay-merge');
+});
+
+document.getElementById('btn-confirm-exo-delete').addEventListener('click', () => {
+  if (pendingDeleteExo) {
+    currentSession.exercises = currentSession.exercises.filter(e => e.name !== pendingDeleteExo);
+    pendingDeleteExo = null;
+    renderNewExoList();
+    currentSets = [{ reps: 0, weight: 0, comment: '' }];
+    renderSetBuilder();
+  }
+  closeOverlay('overlay-confirm-exo');
+});
+
+document.getElementById('btn-cancel-exo-delete').addEventListener('click', () => {
+  pendingDeleteExo = null;
+  closeOverlay('overlay-confirm-exo');
 });
 
 // ══════════════════════════════════
@@ -1873,11 +2320,201 @@ document.getElementById('credits-back').addEventListener('click', () => showScre
 })();
 
 // ══════════════════════════════════
+// TRANSFER / EXPORT / IMPORT
+// ══════════════════════════════════
+
+// ── Compact export format ──
+// Format: each session on one line
+// D:YYYY-MM-DD[|N:name]>exo~reps~kg[~comment];exo~reps~kg...
+// Multiple sets of same exercise on consecutive lines with same header
+
+function encodeExportData() {
+  const sessions = DB.getSessions().slice().sort((a,b) => a.date.localeCompare(b.date));
+  if (!sessions.length) return '';
+  const lines = sessions.map(s => {
+    const header = s.name ? `D:${s.date}|N:${s.name}` : `D:${s.date}`;
+    const exoParts = s.exercises.map(e => {
+      const parts = [e.name, e.reps, e.weight || 0];
+      if (e.comment) parts.push(e.comment);
+      return parts.join('~');
+    }).join(';');
+    return `${header}>${exoParts}`;
+  });
+  return lines.join('\n');
+}
+
+// ── Decode & validate import ──
+function decodeImportData(raw) {
+  // Strip anything that looks like script/html injection
+  // Only allow printable chars, accented letters, newlines, common symbols
+  const sanitized = raw.replace(/<[^>]*>/g, '').replace(/[^\x20-\x7E\xA0-\xFF\n]/g, '').trim();
+  
+  const lines = sanitized.split('\n').map(l => l.trim()).filter(l => l.startsWith('D:'));
+  if (!lines.length) return { error: 'Aucune donnée valide trouvée dans ce code.' };
+
+  const imported = [];
+  for (const line of lines) {
+    // Split header from exercises
+    const gtIdx = line.indexOf('>');
+    if (gtIdx === -1) continue;
+    const headerPart = line.slice(0, gtIdx);
+    const exoPart = line.slice(gtIdx + 1);
+
+    // Parse header
+    const headerFields = headerPart.split('|');
+    const dateField = headerFields.find(f => f.startsWith('D:'));
+    const nameField = headerFields.find(f => f.startsWith('N:'));
+    if (!dateField) continue;
+
+    const date = dateField.slice(2).trim();
+    // Validate date format strictly: YYYY-MM-DD
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+    const name = nameField ? nameField.slice(2).trim().slice(0, 100) : '';
+
+    // Parse exercises — each field is name~reps~kg[~comment]
+    const exercises = [];
+    for (const exoStr of exoPart.split(';')) {
+      const parts = exoStr.split('~');
+      if (parts.length < 2) continue;
+      const exoName = parts[0].trim().slice(0, 100);
+      const reps = Math.max(0, Math.min(9999, parseInt(parts[1]) || 0));
+      const weight = Math.max(0, Math.min(9999, parseFloat(parts[2]) || 0));
+      const comment = parts[3] ? parts[3].trim().slice(0, 300) : '';
+      if (!exoName) continue;
+      exercises.push({ name: exoName, sets: 1, reps, weight, comment });
+    }
+    if (!exercises.length) continue;
+    imported.push({ date, name, exercises });
+  }
+
+  if (!imported.length) return { error: 'Format invalide ou données corrompues.' };
+  return { sessions: imported };
+}
+
+// ── Back buttons ──
+document.getElementById('transfer-back').addEventListener('click', () => showScreen('options'));
+document.getElementById('export-back').addEventListener('click', () => showScreen('transfer'));
+document.getElementById('import-back').addEventListener('click', () => showScreen('transfer'));
+
+// ── Copy button ──
+document.getElementById('btn-copy-export').addEventListener('click', () => {
+  const code = document.getElementById('export-code-box').textContent;
+  if (!code || code.startsWith('(')) return;
+  navigator.clipboard.writeText(code).then(() => {
+    const confirm = document.getElementById('export-copy-confirm');
+    confirm.style.display = 'block';
+    setTimeout(() => confirm.style.display = 'none', 2500);
+  }).catch(() => {
+    // Fallback for older browsers
+    const range = document.createRange();
+    range.selectNode(document.getElementById('export-code-box'));
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+    const confirm = document.getElementById('export-copy-confirm');
+    confirm.style.display = 'block';
+    setTimeout(() => confirm.style.display = 'none', 2500);
+  });
+});
+
+// ── Import button ──
+document.getElementById('btn-import-data').addEventListener('click', () => {
+  const raw = document.getElementById('import-input').value;
+  const result = document.getElementById('import-result');
+  result.style.display = 'block';
+
+  if (!raw.trim()) {
+    result.style.background = 'rgba(255,76,76,0.12)';
+    result.style.color = 'var(--accent2)';
+    result.textContent = 'Veuillez coller un code de sauvegarde.';
+    return;
+  }
+
+  const decoded = decodeImportData(raw);
+  if (decoded.error) {
+    result.style.background = 'rgba(255,76,76,0.12)';
+    result.style.color = 'var(--accent2)';
+    result.textContent = decoded.error;
+    return;
+  }
+
+  // Add each imported session via DB (handles same-date merging automatically)
+  let added = 0;
+  decoded.sessions.forEach(s => {
+    DB.addSession({ ...s });
+    added++;
+  });
+
+  renderHome();
+  result.style.background = 'var(--accent-tint)';
+  result.style.color = 'var(--accent)';
+  result.textContent = `${added} séance${added > 1 ? 's' : ''} importée${added > 1 ? 's' : ''} avec succès !`;
+  document.getElementById('import-input').value = '';
+});
+
+// ── Overlay timer config (inside new session) ──
+function syncOverlayTimer() {
+  const m = Math.floor(timerDuration / 60);
+  const s = timerDuration % 60;
+  document.getElementById('otimer-display').textContent = formatTime(timerDuration);
+  document.getElementById('otimer-min').value = m;
+  document.getElementById('otimer-sec').value = s;
+  document.querySelectorAll('#otimer-presets .timer-preset').forEach(p => {
+    p.classList.toggle('active', parseInt(p.dataset.sec) === timerDuration);
+  });
+}
+
+function adjustOverlayTimer(unit, delta) {
+  const m = parseInt(document.getElementById('otimer-min').value) || 0;
+  const s = parseInt(document.getElementById('otimer-sec').value) || 0;
+  let nm = m, ns = s;
+  if (unit === 'min') nm = Math.max(0, Math.min(59, m + delta));
+  if (unit === 'sec') ns = Math.max(0, Math.min(59, s + delta));
+  timerDuration = Math.max(5, nm * 60 + ns);
+  localStorage.setItem('wt_timer_duration', timerDuration);
+  syncOverlayTimer();
+  updateSessionTimerBar();
+}
+
+document.querySelectorAll('#otimer-presets .timer-preset').forEach(p => {
+  p.addEventListener('click', () => {
+    timerDuration = parseInt(p.dataset.sec);
+    localStorage.setItem('wt_timer_duration', timerDuration);
+    syncOverlayTimer();
+    updateSessionTimerBar();
+  });
+});
+
+['otimer-min','otimer-sec'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    const m = parseInt(document.getElementById('otimer-min').value) || 0;
+    const s = parseInt(document.getElementById('otimer-sec').value) || 0;
+    timerDuration = Math.max(5, m * 60 + s);
+    localStorage.setItem('wt_timer_duration', timerDuration);
+    syncOverlayTimer();
+    updateSessionTimerBar();
+  });
+});
+
+document.getElementById('btn-save-overlay-timer').addEventListener('click', () => {
+  updateTimerConfigDisplay();
+  closeOverlay('overlay-timer-config');
+});
+
+// Sync overlay timer when it opens
+document.getElementById('overlay-timer-config').addEventListener('transitionend', () => {
+  if (document.getElementById('overlay-timer-config').classList.contains('open')) {
+    syncOverlayTimer();
+  }
+});
+
+// ══════════════════════════════════
 // SWIPE TO CLOSE SHEETS
 // ══════════════════════════════════
 (function initSwipeToClose() {
   // Overlays that can be dismissed by swiping down the handle
-  const overlayIds = ['overlay-new', 'overlay-detail', 'overlay-edit', 'overlay-confirm', 'overlay-merge'];
+  const overlayIds = ['overlay-new', 'overlay-detail', 'overlay-edit', 'overlay-confirm', 'overlay-merge', 'overlay-confirm-exo', 'overlay-timer-config'];
 
   // Which overlay to reopen when edit/confirm are swiped away
   const swipeBackTo = {
@@ -1977,10 +2614,164 @@ document.getElementById('credits-back').addEventListener('click', () => showScre
 })();
 
 // ══════════════════════════════════
+// REST TIMER
+// ══════════════════════════════════
+let timerDuration = parseInt(localStorage.getItem('wt_timer_duration') || '90');
+let timerRemaining = 0;
+let timerInterval = null;
+let timerRunning = false;
+const CIRCUMFERENCE = 2 * Math.PI * 24; // r=24
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+function updateTimerConfigDisplay() {
+  const m = Math.floor(timerDuration / 60);
+  const s = timerDuration % 60;
+  document.getElementById('timer-display').textContent = formatTime(timerDuration);
+  document.getElementById('timer-min').value = m;
+  document.getElementById('timer-sec').value = s;
+  // Highlight active preset
+  document.querySelectorAll('.timer-preset').forEach(p => {
+    p.classList.toggle('active', parseInt(p.dataset.sec) === timerDuration);
+  });
+}
+
+function adjustTimer(unit, delta) {
+  const minEl = document.getElementById('timer-min');
+  const secEl = document.getElementById('timer-sec');
+  let m = parseInt(minEl.value) || 0;
+  let s = parseInt(secEl.value) || 0;
+  if (unit === 'min') m = Math.max(0, Math.min(59, m + delta));
+  if (unit === 'sec') s = Math.max(0, Math.min(59, s + delta));
+  timerDuration = m * 60 + s;
+  if (timerDuration < 5) timerDuration = 5;
+  localStorage.setItem('wt_timer_duration', timerDuration);
+  updateTimerConfigDisplay();
+}
+
+// Preset clicks
+document.querySelectorAll('.timer-preset').forEach(p => {
+  p.addEventListener('click', () => {
+    timerDuration = parseInt(p.dataset.sec);
+    localStorage.setItem('wt_timer_duration', timerDuration);
+    updateTimerConfigDisplay();
+  });
+});
+
+// Manual input change
+['timer-min','timer-sec'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    const m = parseInt(document.getElementById('timer-min').value) || 0;
+    const s = parseInt(document.getElementById('timer-sec').value) || 0;
+    timerDuration = m * 60 + s;
+    if (timerDuration < 5) timerDuration = 5;
+    localStorage.setItem('wt_timer_duration', timerDuration);
+    updateTimerConfigDisplay();
+  });
+});
+
+// Save from config screen — no launch, just save & go back
+document.getElementById('btn-start-timer-config').addEventListener('click', () => {
+  localStorage.setItem('wt_timer_duration', timerDuration);
+  updateSessionTimerBar();
+  const prev = localStorage.getItem('workouttracker_last_screen') || 'home';
+  showScreen(prev);
+});
+
+// Timer back button
+document.getElementById('timer-back').addEventListener('click', () => {
+  const prev = localStorage.getItem('workouttracker_last_screen') || 'home';
+  showScreen(prev);
+});
+
+// ── Session timer bar (inside new session overlay) ──
+const STB_CIRCUMFERENCE = 2 * Math.PI * 14; // r=14
+let stbInterval = null;
+let stbRunning = false;
+let stbRemaining = 0;
+
+function updateSessionTimerBar() {
+  const bar = document.getElementById('session-timer-bar');
+  const timeEl = document.getElementById('stb-time');
+  const ring = document.getElementById('stb-ring');
+  const btn = document.getElementById('stb-btn');
+
+  // Update display time (use remaining if running, else full duration)
+  const displaySec = stbRunning ? stbRemaining : timerDuration;
+  timeEl.textContent = formatTime(displaySec);
+
+  // Ring progress
+  const progress = timerDuration > 0 ? displaySec / timerDuration : 1;
+  ring.style.strokeDashoffset = STB_CIRCUMFERENCE * (1 - progress);
+
+  // Button state
+  if (stbRunning) {
+    btn.textContent = '■';
+    btn.className = 'stb-btn-stop';
+  } else {
+    btn.textContent = '▶';
+    btn.className = 'stb-btn-play';
+    bar.classList.remove('done');
+  }
+}
+
+function startStbTimer() {
+  if (stbInterval) clearInterval(stbInterval);
+  stbRemaining = timerDuration;
+  stbRunning = true;
+  document.getElementById('session-timer-bar').classList.remove('done');
+  updateSessionTimerBar();
+  stbInterval = setInterval(() => {
+    stbRemaining--;
+    updateSessionTimerBar();
+    if (stbRemaining <= 0) {
+      clearInterval(stbInterval);
+      stbRunning = false;
+      stbInterval = null;
+      document.getElementById('session-timer-bar').classList.add('done');
+      document.getElementById('stb-time').textContent = '0:00';
+      document.getElementById('stb-btn').textContent = '▶';
+      document.getElementById('stb-btn').className = 'stb-btn-play';
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+      // Reset display after 10s (blink handled by CSS animation)
+      setTimeout(() => {
+        document.getElementById('session-timer-bar').classList.remove('done');
+        updateSessionTimerBar();
+      }, 10000);
+    }
+  }, 1000);
+}
+
+function stopStbTimer() {
+  if (stbInterval) clearInterval(stbInterval);
+  stbInterval = null;
+  stbRunning = false;
+  updateSessionTimerBar();
+}
+
+document.getElementById('stb-btn').addEventListener('click', () => {
+  if (stbRunning) stopStbTimer();
+  else startStbTimer();
+});
+
+// Reset STB when opening new session overlay
+const _origFabClick = document.getElementById('fab').onclick;
+document.getElementById('fab').addEventListener('click', () => {
+  stopStbTimer();
+  updateSessionTimerBar();
+});
+
+// ══════════════════════════════════
 // INIT
 // ══════════════════════════════════
 renderHome();
 document.getElementById('fab').style.display = 'flex';
+updateTimerConfigDisplay();
+updateSessionTimerBar();
 </script>
 </body>
 </html>
