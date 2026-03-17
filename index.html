@@ -59,6 +59,34 @@
   body.light .autocomplete-item.highlighted { background: var(--bg3); }
   body.light select.form-input { background-color: var(--bg3); }
 
+  /* ── DRAFT RESTORE BANNER ── */
+  #draft-banner {
+    display: none;
+    margin: 12px 16px 0;
+    background: var(--accent-tint); border: 1px solid var(--accent-border);
+    border-radius: 14px; padding: 14px 16px;
+    animation: fadeIn 0.3s ease;
+  }
+  #draft-banner-title {
+    font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 4px;
+  }
+  #draft-banner-sub {
+    font-size: 12px; color: var(--text2); margin-bottom: 12px; line-height: 1.5;
+  }
+  #draft-banner-actions { display: flex; gap: 8px; }
+  .draft-btn-resume {
+    flex: 1; padding: 10px; border-radius: 10px;
+    background: var(--accent); color: #000;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700;
+    border: none; cursor: pointer;
+  }
+  .draft-btn-discard {
+    flex: 1; padding: 10px; border-radius: 10px;
+    background: var(--bg3); color: var(--text2);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    border: 1px solid var(--border); cursor: pointer;
+  }
+
   /* ── SESSION TIMER BAR ── */
   #session-timer-bar {
     position: sticky; top: 0; z-index: 20;
@@ -649,6 +677,15 @@
       </div>
     </div>
     <div id="home-content"></div>
+    <!-- Draft restore banner -->
+    <div id="draft-banner">
+      <div id="draft-banner-title">⚠️ Séance non terminée</div>
+      <div id="draft-banner-sub">Une séance était en cours lors du dernier rechargement. Veux-tu la reprendre ?</div>
+      <div id="draft-banner-actions">
+        <button class="draft-btn-resume" id="btn-draft-resume">Reprendre</button>
+        <button class="draft-btn-discard" id="btn-draft-discard">Supprimer</button>
+      </div>
+    </div>
   </div>
 
   <!-- ══ SCREEN: CALENDAR ══ -->
@@ -1497,6 +1534,7 @@ document.getElementById('btn-add-set').addEventListener('click', () => {
 });
 
 document.getElementById('fab').addEventListener('click', () => {
+  clearDraft();
   currentSession = { date: '', name: '', exercises: [] };
   currentSets = [{ reps: 0, weight: 0, comment: '' }];
   const today = new Date().toISOString().split('T')[0];
@@ -1532,6 +1570,7 @@ document.getElementById('btn-add-exo').addEventListener('click', () => {
   currentSets = [{ reps: 0, weight: 0, comment: '' }];
   renderSetBuilder();
   renderNewExoList();
+  saveDraft();
   // Scroll to the new set
   setTimeout(() => {
     const sheet = document.querySelector('#overlay-new .sheet');
@@ -1643,14 +1682,16 @@ document.getElementById('btn-finish-session').addEventListener('click', () => {
   }
 
   DB.addSession({...currentSession});
+  clearDraft();
   closeOverlay('overlay-new');
   maybeShrimpPopup();
 });
 
-document.getElementById('btn-cancel-session').addEventListener('click', () => closeOverlay('overlay-new'));
+document.getElementById('btn-cancel-session').addEventListener('click', () => { clearDraft(); closeOverlay('overlay-new'); });
 
 document.getElementById('btn-confirm-merge').addEventListener('click', () => {
   DB.addSession({...currentSession});
+  clearDraft();
   closeOverlay('overlay-merge');
   closeOverlay('overlay-new');
   maybeShrimpPopup();
@@ -1667,6 +1708,7 @@ document.getElementById('btn-confirm-exo-delete').addEventListener('click', () =
     renderNewExoList();
     currentSets = [{ reps: 0, weight: 0, comment: '' }];
     renderSetBuilder();
+    saveDraft();
   }
   closeOverlay('overlay-confirm-exo');
 });
@@ -2670,6 +2712,7 @@ document.getElementById('btn-shrimp-never').addEventListener('click', () => {
                 openOverlay('overlay-merge');
               } else {
                 DB.addSession({...currentSession});
+                clearDraft();
                 closeOverlay('overlay-new');
                 maybeShrimpPopup();
               }
@@ -2857,6 +2900,64 @@ document.getElementById('fab').addEventListener('click', () => {
   updateSessionTimerBar();
 });
 
+// Auto-save draft on date/name field change
+document.getElementById('session-date').addEventListener('change', saveDraft);
+document.getElementById('session-name').addEventListener('input', saveDraft);
+const DRAFT_KEY = 'wt_session_draft';
+
+function saveDraft() {
+  const draft = {
+    session: currentSession,
+    sets: currentSets,
+    exoName: document.getElementById('exo-name')?.value || '',
+    date: document.getElementById('session-date')?.value || '',
+    name: document.getElementById('session-name')?.value || ''
+  };
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+}
+
+function clearDraft() {
+  localStorage.removeItem(DRAFT_KEY);
+  document.getElementById('draft-banner').style.display = 'none';
+}
+
+function restoreDraft() {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return;
+    const draft = JSON.parse(raw);
+    // Only show banner if there are actually exercises or in-progress sets
+    const hasContent = (draft.session?.exercises?.length > 0) ||
+                       (draft.sets?.some(s => s.reps > 0));
+    if (!hasContent) { clearDraft(); return; }
+
+    const banner = document.getElementById('draft-banner');
+    const exoCount = draft.session?.exercises?.length || 0;
+    const d = draft.date ? new Date(draft.date + 'T12:00:00').toLocaleDateString('fr-FR', { day:'numeric', month:'long' }) : '';
+    document.getElementById('draft-banner-sub').textContent =
+      `Séance du ${d || '...'} avec ${exoCount} exercice${exoCount > 1 ? 's' : ''} enregistré${exoCount > 1 ? 's' : ''}. Veux-tu la reprendre ?`;
+    banner.style.display = 'block';
+
+    document.getElementById('btn-draft-resume').onclick = () => {
+      currentSession = draft.session || { date: '', name: '', exercises: [] };
+      currentSets = draft.sets || [{ reps: 0, weight: 0, comment: '' }];
+      document.getElementById('session-date').value = draft.date || new Date().toISOString().split('T')[0];
+      document.getElementById('session-name').value = draft.name || '';
+      document.getElementById('exo-name').value = draft.exoName || '';
+      renderSetBuilder();
+      renderNewExoList();
+      openOverlay('overlay-new');
+      banner.style.display = 'none';
+    };
+
+    document.getElementById('btn-draft-discard').onclick = () => {
+      clearDraft();
+    };
+  } catch(e) {
+    clearDraft();
+  }
+}
+
 // ══════════════════════════════════
 // INIT
 // ══════════════════════════════════
@@ -2865,6 +2966,7 @@ document.getElementById('fab').style.display = 'flex';
 updateTimerConfigDisplay();
 updateSessionTimerBar();
 syncShrimpToggle();
+restoreDraft();
 </script>
 </body>
 </html>
