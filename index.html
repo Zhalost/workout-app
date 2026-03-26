@@ -87,6 +87,96 @@
     border: 1px solid var(--border); cursor: pointer;
   }
 
+  /* ── STB EXPAND BUTTON ── */
+  .stb-expand-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--border); background: var(--bg2);
+    color: var(--text2); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: color 0.15s, border-color 0.15s;
+  }
+  .stb-expand-btn:active { color: var(--accent); border-color: var(--accent); }
+
+  #overlay-timer-config { z-index: 600; }
+
+  /* ── FULLSCREEN TIMER OVERLAY ── */
+  .fst-overlay {
+    position: fixed; inset: 0; z-index: 500;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .fst-overlay.open { opacity: 1; pointer-events: all; }
+  .fst-inner {
+    width: 100%; max-width: 420px;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 32px; padding: 24px 20px calc(24px + var(--safe-bottom));
+    height: 100%; justify-content: space-between;
+  }
+  .fst-topbar {
+    width: 100%; display: flex; align-items: center;
+    justify-content: space-between; padding-top: var(--safe-top);
+  }
+  .fst-close-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 1.5px solid var(--border); background: var(--bg2);
+    color: var(--text2); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .fst-close-btn:active { color: var(--accent); border-color: var(--accent); }
+  .fst-ring-wrap {
+    position: relative; width: min(70vw, 260px); height: min(70vw, 260px);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .fst-ring-svg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    transform: rotate(-90deg);
+  }
+  .fst-ring-bg { fill: none; stroke: var(--bg3); stroke-width: 12; }
+  .fst-ring-fill {
+    fill: none; stroke: var(--accent); stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 691.15;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.5s linear, stroke 0.3s;
+  }
+  .fst-center {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .fst-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
+  .fst-time {
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(52px, 14vw, 72px);
+    letter-spacing: 4px; color: var(--text); line-height: 1;
+  }
+  .fst-total { font-size: 12px; color: var(--text3); }
+  .fst-controls { display: flex; align-items: center; justify-content: center; gap: 20px; }
+  .fst-pause-btn {
+    width: 72px; height: 72px; border-radius: 50%;
+    border: 2px solid var(--border); background: var(--bg2);
+    color: var(--text2); font-size: 26px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.15s, color 0.15s, transform 0.12s;
+    flex-shrink: 0;
+  }
+  .fst-pause-btn:active { border-color: var(--accent); color: var(--accent); transform: scale(0.92); }
+  .fst-handle {
+    width: 40px; height: 4px; border-radius: 99px;
+    background: var(--text3); opacity: 0.35;
+    margin: 0 auto; cursor: grab;
+    padding: 12px 60px; box-sizing: content-box;
+    margin-left: auto; margin-right: auto;
+  }
+  .fst-ring-wrap { cursor: pointer; }
+  .fst-ring-wrap:active { opacity: 0.85; }
+  /* Done state */
+  .fst-overlay.done .fst-ring-fill { stroke: #4cff72; }
+  .fst-overlay.done .fst-time { color: #4cff72; }
+  .fst-overlay.done .fst-inner { animation: stb-blink-fst 0.6s ease-in-out infinite; }
+  @keyframes stb-blink-fst { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
   /* ── SESSION TIMER BAR ── */
   #session-timer-bar {
     position: sticky; top: 0; z-index: 20;
@@ -215,6 +305,46 @@
   .pip-timer.done .pip-time { color: #4cff72; }
   .pip-timer.done { animation: pip-done-pulse 0.5s ease-in-out 3; }
   @keyframes pip-done-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+  /* ── EXERCISE LIST ── */
+  .exo-list-row {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; transition: border-color 0.2s, transform 0.12s;
+  }
+  .exo-list-row:active { transform: scale(0.98); border-color: var(--accent); }
+  .exo-list-row-name { font-size: 15px; font-weight: 500; color: var(--text); }
+  .exo-list-row-meta { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .exo-list-letter {
+    font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 1px;
+    color: var(--text3); padding: 4px 0 2px; text-transform: uppercase;
+  }
+
+  /* ── VIBRATION PATTERN BUTTONS ── */
+  .vibration-grid {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
+  }
+  .vib-btn {
+    background: var(--bg3); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 14px 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    cursor: pointer; transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .vib-btn:active { transform: scale(0.96); }
+  .vib-btn.active { border-color: var(--accent); background: var(--accent-tint2); }
+  .vib-btn-icon { font-size: 22px; }
+  .vib-btn-label { font-size: 12px; font-weight: 600; color: var(--text2); text-align: center; line-height: 1.3; }
+  .vib-btn.active .vib-btn-label { color: var(--accent); }
+
+  /* ── PR BANNER ── */
+  #exo-pr-banner {
+    margin-top: 8px; padding: 8px 14px;
+    background: var(--accent-tint2); border: 1px solid var(--accent-border3);
+    border-radius: 10px; font-size: 12px; font-weight: 600;
+    color: var(--accent); letter-spacing: 0.3px;
+  }
+
   /* ── TOGGLE SWITCH ── */
   .toggle-row {
     display: flex; align-items: center; justify-content: space-between;
@@ -736,6 +866,11 @@
         </div>
       </div>
       <div id="stats-chart-area"></div>
+      <div id="stats-share-wrap" style="display:none;padding:0 16px 20px">
+        <button class="btn btn-outline" id="btn-share-chart" onclick="shareChart()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px">
+          <span style="font-size:16px">↗</span> Partager ce graphique
+        </button>
+      </div>
     </div>
   </div>
 
@@ -746,13 +881,16 @@
         <button class="topbar-back" id="options-back">‹</button>
         <div>
           <div class="topbar-title">OPTIONS</div>
-          <div class="topbar-sub">Personnalisation</div>
         </div>
       </div>
     </div>
     <div class="options-list">
       <div class="options-row" onclick="showScreen('display')">
         <span class="options-row-label">Affichage</span>
+        <span class="options-row-arrow">›</span>
+      </div>
+      <div class="options-row" onclick="showScreen('exercises')">
+        <span class="options-row-label">Exercices enregistrés</span>
         <span class="options-row-arrow">›</span>
       </div>
     </div>
@@ -768,7 +906,56 @@
         <span class="options-row-arrow">›</span>
       </div>
     </div>
-    <div style="position:absolute;bottom:calc(20px + var(--safe-bottom));left:0;right:0;text-align:center;font-size:11px;color:var(--text3);letter-spacing:0.5px;">Version 1.2</div>
+    <div style="position:absolute;bottom:calc(20px + var(--safe-bottom));left:0;right:0;text-align:center;font-size:11px;color:var(--text3);letter-spacing:0.5px;">Version 1.3</div>
+  </div>
+
+  <!-- ══ SCREEN: EXERCISES LIST ══ -->
+  <div class="screen" id="screen-exercises">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="topbar-back" id="exercises-back">‹</button>
+        <div>
+          <div class="topbar-title">EXERCICES</div>
+          <div class="topbar-sub" id="exercises-count-sub"></div>
+        </div>
+      </div>
+    </div>
+    <div id="exercises-list-content" style="padding:12px 16px;display:flex;flex-direction:column;gap:6px"></div>
+  </div>
+
+  <!-- ══ SCREEN: EXERCISE DETAIL ══ -->
+  <div class="screen" id="screen-exercise-detail">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+        <button class="topbar-back" id="exercise-detail-back">‹</button>
+        <!-- Static title (shown by default) -->
+        <div id="exo-title-static" style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+          <div class="topbar-title" id="exo-detail-title" style="font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">EXERCICE</div>
+          <button id="exo-detail-edit-btn" style="background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;flex-shrink:0;padding:4px;transition:color 0.2s" title="Renommer">✏️</button>
+        </div>
+        <!-- Inline edit (hidden by default) -->
+        <div id="exo-title-edit" style="display:none;flex-direction:column;gap:8px;flex:1;min-width:0;padding:4px 0">
+          <input type="text" id="exo-detail-name-input" class="form-input" style="width:100%;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;padding:10px 14px">
+          <div style="display:flex;gap:6px;align-items:center">
+            <button id="exo-detail-rename-btn" class="btn btn-primary" style="padding:6px 12px;margin:0;font-size:12px;height:auto">Valider</button>
+            <button id="exo-detail-rename-cancel" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:4px">✕</button>
+          </div>
+        </div>
+      </div>
+      <button id="exo-detail-stats-btn" class="topbar-chrono-btn" title="Voir dans Évolution" style="font-size:18px;flex-shrink:0">📈</button>
+    </div>
+
+    <!-- PR Banner -->
+    <div id="exo-detail-pr" style="margin:12px 16px 0;padding:14px 16px;background:var(--accent-tint2);border:1px solid var(--accent-border3);border-radius:14px;display:none">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">P.R. actuel</div>
+      <div id="exo-detail-pr-text" style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--accent)"></div>
+    </div>
+
+    <!-- History -->
+    <div style="padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">Historique</div>
+      <div id="exo-detail-history" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
   </div>
 
   <!-- ══ SCREEN: DISPLAY ══ -->
@@ -913,6 +1100,34 @@
 
       <!-- Validate button -->
       <button class="btn btn-primary" id="btn-start-timer-config">Enregistrer la durée</button>
+
+      <!-- Vibration section -->
+      <div style="margin-top:8px">
+        <div class="toggle-row" style="margin-bottom:12px">
+          <div>
+            <div class="toggle-label">Vibrations</div>
+            <div class="toggle-sub">Vibrer quand le repos est terminé</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-vibration" onchange="setVibrationToggle(this.checked)">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+        <div id="vibration-patterns" style="display:none">
+          <div style="font-size:15px;font-weight:600;color:var(--text2);margin-bottom:12px">Modèle de vibration</div>
+          <div class="vibration-grid">
+            <div class="vib-btn" data-pattern="long" onclick="setVibrationPattern('long')">
+              <div class="vib-btn-label">Longue<br><span style="font-size:10px;opacity:0.7">2 sec</span></div>
+            </div>
+            <div class="vib-btn" data-pattern="salve" onclick="setVibrationPattern('salve')">
+              <div class="vib-btn-label">Salve<br><span style="font-size:10px;opacity:0.7">3 × 0,5 sec</span></div>
+            </div>
+            <div class="vib-btn" data-pattern="sequence" onclick="setVibrationPattern('sequence')">
+              <div class="vib-btn-label">Séquence<br><span style="font-size:10px;opacity:0.7">2 × 1 sec</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -998,7 +1213,43 @@
     </div>
   </div>
 
-  <!-- ══ BOTTOM NAV ══ -->
+  <!-- ══ OVERLAY: FULLSCREEN TIMER ══ -->
+<div id="overlay-fullscreen-timer" class="fst-overlay">
+  <div class="fst-inner">
+
+    <!-- Drag handle to swipe down and close -->
+    <div class="fst-handle" id="fst-handle"></div>
+
+    <!-- Top bar -->
+    <div class="fst-topbar">
+      <button class="fst-close-btn" id="fst-close-btn" title="Réduire">⤡</button>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--text2)">TEMPS DE REPOS</div>
+      <button class="stb-config-btn" id="fst-config-btn" onclick="openOverlay('overlay-timer-config')" style="width:38px;height:38px;font-size:16px">⏱</button>
+    </div>
+
+    <!-- Big ring — clickable to pause/resume -->
+    <div class="fst-ring-wrap" id="fst-ring-wrap" onclick="togglePause()" title="Appuyer pour pause">
+      <svg class="fst-ring-svg" viewBox="0 0 260 260">
+        <circle class="fst-ring-bg" cx="130" cy="130" r="110"/>
+        <circle class="fst-ring-fill" id="fst-ring-fill" cx="130" cy="130" r="110"/>
+      </svg>
+      <div class="fst-center">
+        <div class="fst-label" id="fst-label">Repos</div>
+        <div class="fst-time" id="fst-time">1:30</div>
+        <div class="fst-total" id="fst-total"></div>
+      </div>
+    </div>
+
+    <!-- Controls: pause + play/stop -->
+    <div class="fst-controls">
+      <button class="fst-pause-btn" id="fst-pause-btn" onclick="togglePause()" style="display:none">⏸</button>
+      <button class="stb-btn-play" id="fst-btn" style="width:72px;height:72px;font-size:26px">▶</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ BOTTOM NAV ══ -->
   <nav class="bottom-nav">
     <button class="nav-btn active" data-screen="home">
       <span class="nav-icon">🏠</span>Accueil
@@ -1019,7 +1270,7 @@
 <div class="overlay" id="overlay-new">
   <div class="sheet">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">NOUVELLE SÉANCE</div>
+    <div class="sheet-title" id="new-session-title">NOUVELLE SÉANCE</div>
 
     <!-- ── Sticky rest timer bar ── -->
     <div id="session-timer-bar">
@@ -1036,7 +1287,10 @@
           </div>
           <button id="stb-config-btn" class="stb-config-btn" onclick="openOverlay('overlay-timer-config')">⏱</button>
         </div>
-        <button id="stb-btn" class="stb-btn-play">▶</button>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button id="stb-expand-btn" class="stb-expand-btn" onclick="openFullscreenTimer()" title="Plein écran">⤢</button>
+          <button id="stb-btn" class="stb-btn-play">▶</button>
+        </div>
       </div>
     </div>
     
@@ -1064,6 +1318,7 @@
         <input type="text" class="form-input" id="exo-name" placeholder="ex: Développé couché, Squat..." autocomplete="off">
         <div class="autocomplete-list" id="exo-autocomplete" style="display:none"></div>
       </div>
+      <div id="exo-pr-banner" style="display:none"></div>
     </div>
 
     <div style="padding: 0 20px; margin-bottom: 4px;">
@@ -1161,6 +1416,18 @@
   </div>
 </div>
 
+<!-- ══ OVERLAY: CONFIRM RENAME EXO ══ -->
+<div class="overlay" id="overlay-confirm-rename">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">RENOMMER ?</div>
+    <div style="padding:0 20px 20px;font-size:14px;color:var(--text2);line-height:1.7" id="confirm-rename-text"></div>
+    <button class="btn btn-primary" id="btn-confirm-rename">Confirmer le renommage</button>
+    <button class="btn btn-outline" id="btn-cancel-rename">Annuler</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
 <!-- ══ OVERLAY: CONFIRM DELETE EXO ══ -->
 <div class="overlay" id="overlay-confirm-exo">
   <div class="sheet">
@@ -1199,46 +1466,6 @@
   </div>
 </div>
 
-<!-- ══ OVERLAY: EDIT SESSION ══ -->
-<div class="overlay" id="overlay-edit">
-  <div class="sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">MODIFIER LA SÉANCE</div>
-
-    <div class="form-group">
-      <label class="form-label">Date</label>
-      <input type="date" class="form-input" id="edit-session-date">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Nom de la séance (optionnel)</label>
-      <input type="text" class="form-input" id="edit-session-name" placeholder="ex: Push, Jambes, Full body...">
-    </div>
-
-    <div class="divider"></div>
-    <div class="section-label">Exercices</div>
-    <div class="exo-list" id="edit-exo-list"></div>
-
-    <div class="divider"></div>
-    <div class="section-label">Ajouter un exercice</div>
-    <div class="form-group" style="position:relative">
-      <label class="form-label">Nom de l'exercice</label>
-      <div class="exo-name-wrap">
-        <input type="text" class="form-input" id="edit-exo-name" placeholder="ex: Développé couché, Squat..." autocomplete="off">
-        <div class="autocomplete-list" id="edit-exo-autocomplete" style="display:none"></div>
-      </div>
-    </div>
-    <div style="padding: 0 20px; margin-bottom: 4px;">
-      <span class="form-label">Séries <span id="edit-sets-count-label" style="color:var(--accent)">0</span></span>
-    </div>
-    <div class="set-builder" id="edit-set-builder"></div>
-    <button class="btn-add-set-bottom" id="edit-btn-add-set"><span class="plus-icon">＋</span> Ajouter une série</button>
-    <button class="btn btn-outline" id="edit-btn-add-exo">＋ Ajouter un exercice</button>
-    <div style="height:12px"></div>
-    <button class="btn btn-primary" id="edit-btn-save">Enregistrer les modifications</button>
-    <button class="btn btn-danger" id="edit-btn-cancel">Annuler</button>
-    <div style="height:16px"></div>
-  </div>
-</div>
 
 <script>
 // ══════════════════════════════════
@@ -1337,12 +1564,13 @@ let statsPeriod = 'monthly';
 let statsMetric = 'weight';
 let statsExo = '';
 let detailSessionId = null;
+let editMode = false;
+let editSessionId = null;
 // Stats period navigation
 let statsNavYear = new Date().getFullYear();
 let statsNavMonth = new Date().getMonth();
 // Edit session state
-let editSession = null; // full session object being edited
-let editSets = [];      // current sets being built in edit form
+// editSession and editSets removed — edit now reuses overlay-new via editMode flag
 
 // ══════════════════════════════════
 // NAVIGATION
@@ -1366,7 +1594,8 @@ function showScreen(id) {
   if (id === 'cal') renderCalendar();
   if (id === 'stats') renderStats();
   if (id === 'display') syncDisplayUI();
-  if (id === 'timer') updateTimerConfigDisplay();
+  if (id === 'timer') { updateTimerConfigDisplay(); syncVibrationUI(); }
+  if (id === 'exercises') renderExercisesList();
   if (id === 'export') {
     const code = encodeExportData();
     const box = document.getElementById('export-code-box');
@@ -1566,6 +1795,7 @@ document.getElementById('btn-add-exo').addEventListener('click', () => {
     currentSession.exercises.push({ name, sets: 1, reps: s.reps||0, weight: s.weight||0, comment: s.comment||'' });
   });
   document.getElementById('exo-name').value = '';
+  showPR('');
   // Auto-add one empty set ready for the next exercise
   currentSets = [{ reps: 0, weight: 0, comment: '' }];
   renderSetBuilder();
@@ -1646,6 +1876,7 @@ function editExoGroup(name) {
 
   // Populate the exo name field and set builder
   document.getElementById('exo-name').value = name;
+  showPR(name);
   currentSets = sets.map(s => ({ reps: s.reps || 0, weight: s.weight || 0, comment: s.comment || '' }));
   renderSetBuilder();
   renderNewExoList();
@@ -1670,10 +1901,28 @@ document.getElementById('btn-finish-session').addEventListener('click', () => {
   currentSession.date = date;
   currentSession.name = document.getElementById('session-name').value.trim();
 
-  // Check if a session already exists on this date
+  if (editMode) {
+    // EDIT MODE: delete all sessions on that date then save the merged result
+    const allSessions = DB.getSessions();
+    const dateSessions = allSessions.filter(s => s.date === currentSession.date);
+    dateSessions.forEach(s => DB.deleteSession(s.id));
+    DB.addSession({...currentSession});
+    // Reset overlay to new-session state
+    editMode = false;
+    editSessionId = null;
+    document.getElementById('new-session-title').textContent = 'NOUVELLE SÉANCE';
+    document.getElementById('btn-finish-session').textContent = 'Terminer la séance';
+    document.getElementById('btn-cancel-session').textContent = 'Annuler';
+    clearDraft();
+    closeOverlay('overlay-new');
+    renderHome();
+    if (document.getElementById('screen-cal').classList.contains('active')) renderCalendar();
+    return;
+  }
+
+  // CREATE MODE: check for existing session on this date
   const existing = DB.getSessions().find(s => s.date === date);
   if (existing) {
-    // Show merge confirmation
     const existingName = existing.name ? `"${existing.name}"` : 'sans titre';
     document.getElementById('merge-info').textContent =
       `Un entraînement ${existingName} existe déjà le ${new Date(date + 'T12:00:00').toLocaleDateString('fr-FR', {day:'numeric', month:'long'})}. Les exercices seront fusionnés.`;
@@ -1687,7 +1936,20 @@ document.getElementById('btn-finish-session').addEventListener('click', () => {
   maybeShrimpPopup();
 });
 
-document.getElementById('btn-cancel-session').addEventListener('click', () => { clearDraft(); closeOverlay('overlay-new'); });
+document.getElementById('btn-cancel-session').addEventListener('click', () => {
+  if (editMode) {
+    editMode = false;
+    editSessionId = null;
+    document.getElementById('new-session-title').textContent = 'NOUVELLE SÉANCE';
+    document.getElementById('btn-finish-session').textContent = 'Terminer la séance';
+    document.getElementById('btn-cancel-session').textContent = 'Annuler';
+    closeOverlay('overlay-new');
+    openOverlay('overlay-detail');
+  } else {
+    clearDraft();
+    closeOverlay('overlay-new');
+  }
+});
 
 document.getElementById('btn-confirm-merge').addEventListener('click', () => {
   DB.addSession({...currentSession});
@@ -1809,160 +2071,35 @@ document.getElementById('overlay-detail').addEventListener('click', e => {
 document.getElementById('overlay-new').addEventListener('click', e => {
   if (e.target === document.getElementById('overlay-new')) closeOverlay('overlay-new');
 });
-document.getElementById('overlay-edit').addEventListener('click', e => {
-  if (e.target === document.getElementById('overlay-edit')) closeOverlay('overlay-edit');
-});
-
 // ══════════════════════════════════
-// EDIT SESSION
+// EDIT SESSION (reuses overlay-new)
 // ══════════════════════════════════
 document.getElementById('btn-edit-session').addEventListener('click', () => {
   const sessions = DB.getSessions();
-  editSession = JSON.parse(JSON.stringify(sessions.find(x => x.id === detailSessionId)));
-  if (!editSession) return;
-  document.getElementById('edit-session-date').value = editSession.date;
-  document.getElementById('edit-session-name').value = editSession.name || '';
-  document.getElementById('edit-exo-name').value = '';
-  editSets = [];
-  renderEditSetBuilder();
-  renderEditExoList();
+  const date = sessions.find(x => x.id === detailSessionId)?.date;
+  if (!date) return;
+  // Merge all sessions on this date into one working session
+  const daySessions = sessions.filter(s => s.date === date);
+  const mergedExercises = daySessions.flatMap(s => s.exercises);
+  const mergedName = daySessions.find(s => s.name)?.name || '';
+
+  editMode = true;
+  editSessionId = detailSessionId;
+
+  currentSession = { date, name: mergedName, exercises: [...mergedExercises] };
+  currentSets = [{ reps: 0, weight: 0, comment: '' }];
+
+  document.getElementById('new-session-title').textContent = 'MODIFIER LA SÉANCE';
+  document.getElementById('btn-finish-session').textContent = 'Enregistrer les modifications';
+  document.getElementById('btn-cancel-session').textContent = 'Annuler';
+  document.getElementById('session-date').value = date;
+  document.getElementById('session-name').value = mergedName;
+  document.getElementById('exo-name').value = '';
+
+  renderSetBuilder();
+  renderNewExoList();
   closeOverlay('overlay-detail');
-  openOverlay('overlay-edit');
-  setTimeout(() => setupAutocomplete('edit-exo-name', 'edit-exo-autocomplete'), 50);
-});
-
-function renderEditSetBuilder() {
-  const builder = document.getElementById('edit-set-builder');
-  document.getElementById('edit-sets-count-label').textContent = editSets.length;
-  if (editSets.length === 0) { builder.innerHTML = ''; return; }
-  builder.innerHTML = editSets.map((s, i) => `
-    <div class="set-builder-row">
-      <div class="set-builder-row-top">
-        <span class="set-num">S${i+1}</span>
-        <input type="number" class="set-mini-input" placeholder="Reps" min="1"
-          value="${s.reps||''}" oninput="editSets[${i}].reps=parseInt(this.value)||0">
-        <input type="number" class="set-mini-input" placeholder="kg" min="0" step="0.5"
-          value="${s.weight||''}" oninput="editSets[${i}].weight=parseFloat(this.value)||0">
-        <button class="set-del-btn" onclick="removeEditSet(${i})">✕</button>
-      </div>
-      <input type="text" class="set-comment-input" placeholder="Commentaire (optionnel)"
-        value="${s.comment||''}" oninput="editSets[${i}].comment=this.value">
-    </div>`).join('');
-}
-
-function removeEditSet(i) {
-  editSets.splice(i, 1);
-  renderEditSetBuilder();
-}
-
-document.getElementById('edit-btn-add-set').addEventListener('click', () => {
-  const last = editSets[editSets.length - 1];
-  editSets.push({ reps: last?.reps||0, weight: last?.weight||0, comment: '' });
-  renderEditSetBuilder();
-  setTimeout(() => {
-    const sheet = document.querySelector('#overlay-edit .sheet');
-    sheet.scrollTop = sheet.scrollHeight;
-  }, 50);
-});
-
-document.getElementById('edit-btn-add-exo').addEventListener('click', () => {
-  const name = document.getElementById('edit-exo-name').value.trim();
-  if (!name) { flashEditInput('edit-exo-name'); return; }
-  if (editSets.length === 0) {
-    const btn = document.getElementById('edit-btn-add-set');
-    btn.style.borderColor='var(--accent2)'; btn.style.color='var(--accent2)';
-    setTimeout(()=>{btn.style.borderColor='';btn.style.color='';},800);
-    return;
-  }
-  editSets.forEach(s => {
-    editSession.exercises.push({ name, sets:1, reps:s.reps||0, weight:s.weight||0, comment:s.comment||'' });
-  });
-  document.getElementById('edit-exo-name').value = '';
-  editSets = [];
-  renderEditSetBuilder();
-  renderEditExoList();
-});
-
-function flashEditInput(id) {
-  const el = document.getElementById(id);
-  el.style.borderColor = 'var(--accent2)'; el.focus();
-  setTimeout(() => el.style.borderColor = '', 800);
-}
-
-function renderEditExoList() {
-  const list = document.getElementById('edit-exo-list');
-  if (!editSession || editSession.exercises.length === 0) {
-    list.innerHTML = '<div style="padding:10px 0;text-align:center;color:var(--text3);font-size:13px;">Aucun exercice</div>';
-    return;
-  }
-  const groups = [];
-  const seen = {};
-  editSession.exercises.forEach((e, idx) => {
-    if (seen[e.name] === undefined) { seen[e.name] = groups.length; groups.push({ name: e.name, sets: [] }); }
-    groups[seen[e.name]].sets.push({ ...e, idx });
-  });
-  list.innerHTML = groups.map(g => {
-    const setsHtml = g.sets.map((s,i) => `
-      <div class="set-builder-row" style="margin-bottom:4px">
-        <div class="set-builder-row-top">
-          <span class="set-num">S${i+1}</span>
-          <input type="number" class="set-mini-input" placeholder="Reps" min="1"
-            value="${s.reps||''}" oninput="updateEditExoSet('${g.name}',${i},'reps',parseInt(this.value)||0)">
-          <input type="number" class="set-mini-input" placeholder="kg" min="0" step="0.5"
-            value="${s.weight||''}" oninput="updateEditExoSet('${g.name}',${i},'weight',parseFloat(this.value)||0)">
-          <button class="set-del-btn" onclick="deleteEditExoSet('${g.name}',${i})">✕</button>
-        </div>
-        <input type="text" class="set-comment-input" placeholder="Commentaire (optionnel)"
-          value="${s.comment||''}" oninput="updateEditExoSet('${g.name}',${i},'comment',this.value)">
-      </div>`).join('');
-    return `<div class="exo-item" style="margin-bottom:8px">
-      <div class="exo-item-header">
-        <div class="exo-item-name">${g.name}</div>
-        <button class="exo-item-del" onclick="removeEditExoGroup('${g.name}')">✕</button>
-      </div>
-      <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">${setsHtml}</div>
-    </div>`;
-  }).join('');
-}
-
-function updateEditExoSet(name, setIdx, field, val) {
-  let count = 0;
-  editSession.exercises.forEach(e => {
-    if (e.name === name) {
-      if (count === setIdx) e[field] = val;
-      count++;
-    }
-  });
-}
-
-function deleteEditExoSet(name, setIdx) {
-  let count = 0;
-  editSession.exercises = editSession.exercises.filter(e => {
-    if (e.name !== name) return true;
-    return count++ !== setIdx;
-  });
-  renderEditExoList();
-}
-
-function removeEditExoGroup(name) {
-  editSession.exercises = editSession.exercises.filter(e => e.name !== name);
-  renderEditExoList();
-}
-
-document.getElementById('edit-btn-save').addEventListener('click', () => {
-  const date = document.getElementById('edit-session-date').value;
-  if (!date) { flashEditInput('edit-session-date'); return; }
-  editSession.date = date;
-  editSession.name = document.getElementById('edit-session-name').value.trim();
-  DB.updateSession(editSession.id, editSession);
-  closeOverlay('overlay-edit');
-  renderHome();
-  if (document.getElementById('screen-cal').classList.contains('active')) renderCalendar();
-});
-
-document.getElementById('edit-btn-cancel').addEventListener('click', () => {
-  closeOverlay('overlay-edit');
-  openOverlay('overlay-detail');
+  openOverlay('overlay-new');
 });
 
 // ══════════════════════════════════
@@ -2035,7 +2172,7 @@ function renderStats() {
 function renderChart() {
   const area = document.getElementById('stats-chart-area');
   updateStatsPeriodLabel();
-  if (!statsExo) { area.innerHTML = '<div class="no-data">Sélectionnez un exercice pour voir son évolution</div>'; return; }
+  if (!statsExo) { area.innerHTML = '<div class="no-data">Sélectionnez un exercice pour voir son évolution</div>'; document.getElementById('stats-share-wrap').style.display = 'none'; return; }
 
   const sessions = DB.getSessions().sort((a,b) => a.date.localeCompare(b.date));
   let labels = [], values = [], title = '';
@@ -2083,11 +2220,13 @@ function renderChart() {
 
   if (values.length === 0) {
     area.innerHTML = '<div class="no-data">Aucune donnée sur cette période</div>';
+    document.getElementById('stats-share-wrap').style.display = 'none';
     return;
   }
 
   area.innerHTML = `<div class="chart-card"><div class="chart-title">${title}</div><div class="chart-area"><canvas id="myChart"></canvas></div></div>`;
   drawChart('myChart', labels, values);
+  document.getElementById('stats-share-wrap').style.display = 'block';
 }
 
 function drawChart(id, labels, data) {
@@ -2179,6 +2318,190 @@ function drawChart(id, labels, data) {
     if (data.length <= 8 || i % Math.ceil(data.length/8) === 0 || i === data.length-1)
       ctx.fillText(l, x(i), H - 8);
   });
+}
+
+// ══════════════════════════════════
+// SHARE CHART
+// ══════════════════════════════════
+function shareChart() {
+  const sessions = DB.getSessions().sort((a,b) => a.date.localeCompare(b.date));
+  let labels = [], values = [], periodLabel = '';
+
+  if (statsPeriod === 'monthly') {
+    const yStr = String(statsNavYear);
+    const mStr = String(statsNavMonth + 1).padStart(2,'0');
+    const prefix = `${yStr}-${mStr}-`;
+    sessions.filter(s => s.date.startsWith(prefix)).forEach(s => {
+      const exos = s.exercises.filter(e => e.name === statsExo);
+      if (!exos.length) return;
+      const val = statsMetric === 'weight' ? Math.max(...exos.map(e => e.weight||0)) : Math.max(...exos.map(e => e.reps||0));
+      labels.push(s.date.slice(8) + '/' + mStr);
+      values.push(val);
+    });
+    periodLabel = `${MONTHS_FR[statsNavMonth]} ${statsNavYear}`;
+  } else {
+    const yStr = String(statsNavYear);
+    for (let m = 0; m < 12; m++) {
+      const mStr = String(m+1).padStart(2,'0');
+      const monthSessions = sessions.filter(s => s.date.startsWith(`${yStr}-${mStr}-`));
+      let maxVal = null;
+      monthSessions.forEach(s => {
+        const exos = s.exercises.filter(e => e.name === statsExo);
+        if (!exos.length) return;
+        const val = statsMetric === 'weight' ? Math.max(...exos.map(e => e.weight||0)) : Math.max(...exos.map(e => e.reps||0));
+        if (maxVal === null || val > maxVal) maxVal = val;
+      });
+      if (maxVal !== null) { labels.push(MONTHS_FR[m].length <= 5 ? MONTHS_FR[m] : MONTHS_FR[m].slice(0,3)); values.push(maxVal); }
+    }
+    periodLabel = String(statsNavYear);
+  }
+  const metricLabel = statsMetric === 'weight' ? 'Poids (kg)' : 'Répétitions';
+
+  // Compute PR
+  let prBestWeight = 0, prBestReps = 0;
+  DB.getSessions().forEach(s => {
+    s.exercises.forEach(e => {
+      if (e.name !== statsExo) return;
+      const w = e.weight||0, r = e.reps||0;
+      if (w > prBestWeight || (w === prBestWeight && r > prBestReps)) { prBestWeight = w; prBestReps = r; }
+    });
+  });
+  const prText = prBestWeight > 0 ? `P.R. actuel : ${prBestWeight}kg × ${prBestReps} reps`
+               : prBestReps > 0  ? `P.R. actuel : ${prBestReps} reps` : '';
+
+  // Colors
+  const accentHex = document.documentElement.dataset.accentHex || '#e8ff3c';
+  const accentR = parseInt(document.documentElement.dataset.accentR)||232;
+  const accentG = parseInt(document.documentElement.dataset.accentG)||255;
+  const accentB = parseInt(document.documentElement.dataset.accentB)||60;
+  const isLight = document.body.classList.contains('light');
+  const bg = isLight ? '#f5f5f5' : '#0a0a0a';
+  const card = isLight ? '#ffffff' : '#1a1a1a';
+  const border = isLight ? '#dedede' : '#2a2a2a';
+  const textCol = isLight ? '#111111' : '#f0f0f0';
+  const text2 = isLight ? '#666666' : '#888888';
+  const gridCol = isLight ? '#e0e0e0' : '#2a2a2a';
+  const tickCol = isLight ? '#aaaaaa' : '#555555';
+
+  // Build canvas
+  const SCALE = 2, CW = 400, CH = 420;
+  const cv = document.createElement('canvas');
+  cv.width = CW * SCALE; cv.height = CH * SCALE;
+  const ctx = cv.getContext('2d');
+  ctx.scale(SCALE, SCALE);
+
+  // Background + card
+  ctx.fillStyle = bg; ctx.fillRect(0,0,CW,CH);
+  function roundRect(x,y,w,h,r) {
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+    ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+    ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+    ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r); ctx.closePath();
+  }
+  const CR = 20;
+  ctx.fillStyle = card; ctx.strokeStyle = border; ctx.lineWidth = 1;
+  roundRect(16,16,CW-32,CH-32,CR); ctx.fill(); ctx.stroke();
+
+  // Accent top stripe
+  ctx.fillStyle = accentHex;
+  ctx.beginPath();
+  ctx.moveTo(16+CR,16); ctx.lineTo(CW-16-CR,16);
+  ctx.arcTo(CW-16,16,CW-16,16+CR,CR); ctx.lineTo(CW-16,21);
+  ctx.lineTo(16,21); ctx.arcTo(16,16,16+CR,16,CR); ctx.closePath();
+  ctx.fill();
+
+  // Title
+  ctx.fillStyle = textCol; ctx.font = 'bold 18px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText(statsExo, 30, 52);
+  ctx.fillStyle = text2; ctx.font = '13px sans-serif';
+  ctx.fillText(`${periodLabel} · ${metricLabel}`, 30, 72);
+
+  // PR badge
+  let prBadgeBottom = 82;
+  if (prText) {
+    ctx.font = 'bold 12px sans-serif';
+    const bw = ctx.measureText(prText).width + 24;
+    ctx.fillStyle = `rgba(${accentR},${accentG},${accentB},0.15)`;
+    roundRect(30,84,bw,26,8); ctx.fill();
+    ctx.fillStyle = accentHex; ctx.textAlign = 'left';
+    ctx.fillText(prText, 42, 101);
+    prBadgeBottom = 120;
+  }
+
+  // Chart area
+  const pad = { top: prBadgeBottom + 16, right: 28, bottom: 52, left: 50 };
+  const cw = CW - 32 - pad.left - pad.right;
+  const ch = CH - 32 - pad.top - pad.bottom;
+  const ox = 16 + pad.left, oy = pad.top;
+
+  function niceStep(rawRange, targetTicks) {
+    const rough = rawRange / targetTicks;
+    const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+    const n = rough / mag;
+    let nice = n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10;
+    return nice * mag;
+  }
+  const rawMax = Math.max(...values);
+  const step = niceStep(rawMax||10, 4);
+  const axisMax = Math.ceil((rawMax*1.05||10)/step)*step;
+  const ticks = []; for(let v=0;v<=axisMax;v+=step) ticks.push(v);
+  const xPos = i => ox + (i/(values.length-1||1))*cw;
+  const yPos = v => oy + ch - (v/axisMax)*ch;
+
+  ticks.forEach(v => {
+    const yv = yPos(v);
+    ctx.strokeStyle = gridCol; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(ox,yv); ctx.lineTo(ox+cw,yv); ctx.stroke();
+    ctx.fillStyle = tickCol; ctx.font = '9px sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(v%1===0?v:v.toFixed(1), ox-6, yv+3);
+  });
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0,oy,0,oy+ch);
+  grad.addColorStop(0,`rgba(${accentR},${accentG},${accentB},0.3)`);
+  grad.addColorStop(1,`rgba(${accentR},${accentG},${accentB},0)`);
+  ctx.beginPath(); ctx.moveTo(xPos(0),yPos(values[0]));
+  values.forEach((v,i)=>{if(i>0)ctx.lineTo(xPos(i),yPos(v));});
+  ctx.lineTo(xPos(values.length-1),oy+ch); ctx.lineTo(xPos(0),oy+ch); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+
+  // Line
+  ctx.beginPath(); ctx.strokeStyle = accentHex; ctx.lineWidth = 2.5; ctx.lineJoin='round'; ctx.lineCap='round';
+  values.forEach((v,i)=>{ i===0?ctx.moveTo(xPos(i),yPos(v)):ctx.lineTo(xPos(i),yPos(v)); });
+  ctx.stroke();
+
+  // Dots + labels
+  values.forEach((v,i)=>{
+    ctx.beginPath(); ctx.arc(xPos(i),yPos(v),4,0,Math.PI*2); ctx.fillStyle=accentHex; ctx.fill();
+    ctx.beginPath(); ctx.arc(xPos(i),yPos(v),2,0,Math.PI*2); ctx.fillStyle=card; ctx.fill();
+    ctx.fillStyle=accentHex; ctx.font='bold 9px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(v,xPos(i),yPos(v)-7);
+  });
+
+  // X labels
+  ctx.fillStyle=tickCol; ctx.font='9px sans-serif'; ctx.textAlign='center';
+  labels.forEach((l,i)=>{
+    if(values.length<=8||i%Math.ceil(values.length/8)===0||i===values.length-1)
+      ctx.fillText(l,xPos(i),oy+ch+16);
+  });
+
+  // Watermark
+  ctx.fillStyle=text2; ctx.font='10px sans-serif'; ctx.textAlign='right';
+  ctx.fillText('Workout Tracker · par Zhalost', CW-30, CH-22);
+
+  // Share
+  cv.toBlob(blob => {
+    if (!blob) return;
+    const file = new File([blob], `${statsExo}_${periodLabel}.png`, {type:'image/png'});
+    if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
+      navigator.share({ files:[file], title:`${statsExo} — ${periodLabel}`, text: prText }).catch(()=>{});
+    } else {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download=`${statsExo}_${periodLabel}.png`; a.click();
+      URL.revokeObjectURL(url);
+    }
+  }, 'image/png');
 }
 
 // Stats period nav
@@ -2323,11 +2646,57 @@ function pickAutocomplete(inputId, dropdownId, value) {
   input.value = value;
   document.getElementById(dropdownId).style.display = 'none';
   input.focus();
+  // Show PR if this is the main exo-name field
+  if (inputId === 'exo-name') showPR(value);
 }
 
-// Init autocomplete on both fields
+function showPR(name) {
+  const banner = document.getElementById('exo-pr-banner');
+  if (!banner) return;
+  if (!name.trim()) { banner.style.display = 'none'; return; }
+
+  // Find best weight (and corresponding reps at that weight) across all saved sessions
+  const allSessions = DB.getSessions();
+  let bestWeight = 0;
+  let bestReps = 0;
+
+  allSessions.forEach(s => {
+    s.exercises.forEach(e => {
+      if (e.name.toLowerCase() === name.toLowerCase()) {
+        const w = e.weight || 0;
+        const r = e.reps || 0;
+        if (w > bestWeight || (w === bestWeight && r > bestReps)) {
+          bestWeight = w;
+          bestReps = r;
+        }
+      }
+    });
+  });
+
+  if (bestWeight === 0 && bestReps === 0) {
+    banner.style.display = 'none';
+    return;
+  }
+
+  if (bestWeight > 0) {
+    banner.textContent = `P.R. actuel : ${bestWeight}kg à ${bestReps} Réps.`;
+  } else {
+    banner.textContent = `P.R. actuel : ${bestReps} Réps.`;
+  }
+  banner.style.display = 'block';
+}
+
+// Init autocomplete on main field only (edit overlay removed)
 setupAutocomplete('exo-name', 'exo-autocomplete');
-setupAutocomplete('edit-exo-name', 'edit-exo-autocomplete');
+
+// Show PR when user types in the exo name field
+document.getElementById('exo-name').addEventListener('input', () => {
+  showPR(document.getElementById('exo-name').value.trim());
+});
+// Hide PR when field is cleared/new exercise loaded
+document.getElementById('exo-name').addEventListener('change', () => {
+  showPR(document.getElementById('exo-name').value.trim());
+});
 
 // ══════════════════════════════════
 // OVERLAY HELPERS
@@ -2642,11 +3011,225 @@ document.getElementById('btn-shrimp-never').addEventListener('click', () => {
 });
 
 // ══════════════════════════════════
+// EXERCISES LIST & DETAIL
+// ══════════════════════════════════
+let currentExoDetailName = '';
+
+document.getElementById('exercises-back').addEventListener('click', () => showScreen('options'));
+document.getElementById('exercise-detail-back').addEventListener('click', () => {
+  document.getElementById('exo-title-static').style.display = 'flex';
+  document.getElementById('exo-title-edit').style.display = 'none';
+  showScreen('exercises');
+});
+
+// Pencil — enter edit mode
+document.getElementById('exo-detail-edit-btn').addEventListener('click', () => {
+  document.getElementById('exo-title-static').style.display = 'none';
+  document.getElementById('exo-title-edit').style.display = 'flex';
+  const input = document.getElementById('exo-detail-name-input');
+  input.value = currentExoDetailName;
+  input.focus(); input.select();
+});
+
+// Cancel rename
+document.getElementById('exo-detail-rename-cancel').addEventListener('click', () => {
+  document.getElementById('exo-title-static').style.display = 'flex';
+  document.getElementById('exo-title-edit').style.display = 'none';
+});
+
+// Validate — show confirm overlay
+document.getElementById('exo-detail-rename-btn').addEventListener('click', () => {
+  const newName = document.getElementById('exo-detail-name-input').value.trim();
+  if (!newName || newName === currentExoDetailName) {
+    document.getElementById('exo-title-static').style.display = 'flex';
+    document.getElementById('exo-title-edit').style.display = 'none';
+    return;
+  }
+  document.getElementById('confirm-rename-text').innerHTML =
+    `Renommer <strong style="color:var(--text)">${currentExoDetailName}</strong> en <strong style="color:var(--accent)">${newName}</strong> ?<br><br>
+    <span style="font-size:12px;color:var(--text3)">⚠️ Ce nom sera modifié dans toutes les séances enregistrées, dans l'historique et dans l'autocomplétion.</span>`;
+  openOverlay('overlay-confirm-rename');
+});
+
+// Confirm rename
+document.getElementById('btn-confirm-rename').addEventListener('click', () => {
+  const newName = document.getElementById('exo-detail-name-input').value.trim();
+  if (!newName) { closeOverlay('overlay-confirm-rename'); return; }
+  const all = DB.load();
+  all.forEach(s => { s.exercises.forEach(e => { if (e.name === currentExoDetailName) e.name = newName; }); });
+  DB.save(all);
+  currentExoDetailName = newName;
+  document.getElementById('exo-detail-title').textContent = newName.toUpperCase();
+  document.getElementById('exo-title-static').style.display = 'flex';
+  document.getElementById('exo-title-edit').style.display = 'none';
+  closeOverlay('overlay-confirm-rename');
+  renderExercisesList();
+});
+
+document.getElementById('btn-cancel-rename').addEventListener('click', () => closeOverlay('overlay-confirm-rename'));
+
+document.getElementById('exo-detail-stats-btn').addEventListener('click', () => {
+  // Jump to stats screen with this exercise pre-selected
+  statsExo = currentExoDetailName;
+  const sel = document.getElementById('stats-exo-select');
+  if (sel) sel.value = currentExoDetailName;
+  showScreen('stats');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const statsNav = document.querySelector('.nav-btn[data-screen="stats"]');
+  if (statsNav) statsNav.classList.add('active');
+  localStorage.setItem('workouttracker_last_screen', 'stats');
+  renderStats();
+});
+
+function renderExercisesList() {
+  const sessions = DB.getSessions();
+  // Collect all unique exercise names with their session count and PR
+  const exoMap = {}; // name -> { count, bestWeight, bestReps, dates }
+  sessions.forEach(s => {
+    const seenInSession = new Set();
+    s.exercises.forEach(e => {
+      if (!exoMap[e.name]) exoMap[e.name] = { count: 0, bestWeight: 0, bestReps: 0 };
+      const w = e.weight || 0;
+      const r = e.reps || 0;
+      if (w > exoMap[e.name].bestWeight || (w === exoMap[e.name].bestWeight && r > exoMap[e.name].bestReps)) {
+        exoMap[e.name].bestWeight = w;
+        exoMap[e.name].bestReps = r;
+      }
+      if (!seenInSession.has(e.name)) {
+        exoMap[e.name].count++;
+        seenInSession.add(e.name);
+      }
+    });
+  });
+
+  const names = Object.keys(exoMap).sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
+  const sub = document.getElementById('exercises-count-sub');
+  if (sub) sub.textContent = `${names.length} exercice${names.length > 1 ? 's' : ''}`;
+
+  const container = document.getElementById('exercises-list-content');
+  if (!names.length) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:14px;padding:40px 0">Aucun exercice enregistré</div>';
+    return;
+  }
+
+  let html = '';
+  let lastLetter = '';
+  names.forEach(name => {
+    const letter = name[0].toUpperCase();
+    if (letter !== lastLetter) {
+      html += `<div class="exo-list-letter">${letter}</div>`;
+      lastLetter = letter;
+    }
+    const d = exoMap[name];
+    const pr = d.bestWeight > 0 ? `${d.bestWeight}kg × ${d.bestReps} reps` : `${d.bestReps} reps max`;
+    html += `
+      <div class="exo-list-row" onclick="openExerciseDetail('${name.replace(/'/g, "\\'")}')">
+        <div>
+          <div class="exo-list-row-name">${name}</div>
+          <div class="exo-list-row-meta">${d.count} séance${d.count > 1 ? 's' : ''} · P.R. ${pr}</div>
+        </div>
+        <span style="color:var(--text3);font-size:18px">›</span>
+      </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function openExerciseDetail(name) {
+  currentExoDetailName = name;
+  document.getElementById('exo-detail-title').textContent = name.toUpperCase();
+  document.getElementById('exo-detail-name-input').value = name;
+  // Reset edit mode to static view
+  document.getElementById('exo-title-static').style.display = 'flex';
+  document.getElementById('exo-title-edit').style.display = 'none';
+
+  // Compute PR
+  const sessions = DB.getSessions();
+  let bestWeight = 0, bestReps = 0;
+  const history = []; // [{date, sets:[]}]
+
+  sessions.forEach(s => {
+    const exos = s.exercises.filter(e => e.name === name);
+    if (!exos.length) return;
+    exos.forEach(e => {
+      const w = e.weight || 0, r = e.reps || 0;
+      if (w > bestWeight || (w === bestWeight && r > bestReps)) { bestWeight = w; bestReps = r; }
+    });
+    history.push({ date: s.date, sets: exos });
+  });
+  history.sort((a, b) => b.date.localeCompare(a.date));
+
+  // PR display
+  const prBanner = document.getElementById('exo-detail-pr');
+  const prText = document.getElementById('exo-detail-pr-text');
+  if (bestReps > 0) {
+    prBanner.style.display = 'block';
+    prText.textContent = bestWeight > 0 ? `${bestWeight} kg à ${bestReps} reps` : `${bestReps} reps`;
+  } else {
+    prBanner.style.display = 'none';
+  }
+
+  // History
+  const histEl = document.getElementById('exo-detail-history');
+  if (!history.length) {
+    histEl.innerHTML = '<div style="color:var(--text3);font-size:13px">Aucune donnée</div>';
+  } else {
+    histEl.innerHTML = history.map(h => {
+      const d = new Date(h.date + 'T12:00:00');
+      const dateStr = d.toLocaleDateString('fr-FR', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+      const setsSummary = h.sets.map((e, i) => `<span style="font-size:12px;color:var(--text2)">S${i+1}: ${e.reps} reps${e.weight ? ` @ ${e.weight}kg` : ''}</span>`).join(' &nbsp;·&nbsp; ');
+      return `
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px">
+          <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:6px">${dateStr}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">${setsSummary}</div>
+        </div>`;
+    }).join('');
+  }
+
+  showScreen('exercise-detail');
+}
+const VIBRATION_PATTERNS = {
+  long:     [2000],
+  salve:    [500, 200, 500, 200, 500],
+  sequence: [1000, 300, 1000]
+};
+
+function setVibrationToggle(enabled) {
+  localStorage.setItem('wt_vibration', enabled ? '1' : '0');
+  syncVibrationUI();
+}
+
+function setVibrationPattern(pattern) {
+  localStorage.setItem('wt_vib_pattern', pattern);
+  syncVibrationUI();
+  // Preview the pattern
+  if (navigator.vibrate) navigator.vibrate(VIBRATION_PATTERNS[pattern] || [200]);
+}
+
+function syncVibrationUI() {
+  const enabled = localStorage.getItem('wt_vibration') === '1';
+  const toggle = document.getElementById('toggle-vibration');
+  if (toggle) toggle.checked = enabled;
+  const patterns = document.getElementById('vibration-patterns');
+  if (patterns) patterns.style.display = enabled ? 'block' : 'none';
+  const pattern = localStorage.getItem('wt_vib_pattern') || 'long';
+  document.querySelectorAll('.vib-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.pattern === pattern);
+  });
+}
+
+function triggerVibration() {
+  if (localStorage.getItem('wt_vibration') !== '1') return;
+  if (!navigator.vibrate) return;
+  const pattern = localStorage.getItem('wt_vib_pattern') || 'long';
+  navigator.vibrate(VIBRATION_PATTERNS[pattern] || [2000]);
+}
+
+// ══════════════════════════════════
 // SWIPE TO CLOSE SHEETS
 // ══════════════════════════════════
 (function initSwipeToClose() {
   // Overlays that can be dismissed by swiping down the handle
-  const overlayIds = ['overlay-new', 'overlay-detail', 'overlay-edit', 'overlay-confirm', 'overlay-merge', 'overlay-confirm-exo', 'overlay-timer-config', 'overlay-shrimp'];
+  const overlayIds = ['overlay-new', 'overlay-detail', 'overlay-confirm', 'overlay-merge', 'overlay-confirm-exo', 'overlay-timer-config', 'overlay-shrimp', 'overlay-confirm-rename'];
 
   // Which overlay to reopen when edit/confirm are swiped away
   const swipeBackTo = {
@@ -2701,20 +3284,34 @@ document.getElementById('btn-shrimp-never').addEventListener('click', () => {
           if (overlayId === 'overlay-new') {
             const date = document.getElementById('session-date').value;
             if (date && currentSession.exercises.length > 0) {
-              // Same logic as btn-finish-session
               currentSession.date = date;
               currentSession.name = document.getElementById('session-name').value.trim();
-              const existing = DB.getSessions().find(s => s.date === date);
-              if (existing) {
-                closeOverlay('overlay-new');
-                document.getElementById('merge-info').textContent =
-                  `Un entraînement ${existing.name ? '"' + existing.name + '"' : 'sans titre'} existe déjà le ${new Date(date + 'T12:00:00').toLocaleDateString('fr-FR', {day:'numeric', month:'long'})}. Les exercices seront fusionnés.`;
-                openOverlay('overlay-merge');
-              } else {
+
+              if (editMode) {
+                // Edit mode: replace session, no merge prompt
+                const allSessions = DB.getSessions();
+                allSessions.filter(s => s.date === currentSession.date).forEach(s => DB.deleteSession(s.id));
                 DB.addSession({...currentSession});
+                editMode = false; editSessionId = null;
+                document.getElementById('new-session-title').textContent = 'NOUVELLE SÉANCE';
+                document.getElementById('btn-finish-session').textContent = 'Terminer la séance';
+                document.getElementById('btn-cancel-session').textContent = 'Annuler';
                 clearDraft();
                 closeOverlay('overlay-new');
-                maybeShrimpPopup();
+                renderHome();
+              } else {
+                const existing = DB.getSessions().find(s => s.date === date);
+                if (existing) {
+                  closeOverlay('overlay-new');
+                  document.getElementById('merge-info').textContent =
+                    `Un entraînement ${existing.name ? '"' + existing.name + '"' : 'sans titre'} existe déjà le ${new Date(date + 'T12:00:00').toLocaleDateString('fr-FR', {day:'numeric', month:'long'})}. Les exercices seront fusionnés.`;
+                  openOverlay('overlay-merge');
+                } else {
+                  DB.addSession({...currentSession});
+                  clearDraft();
+                  closeOverlay('overlay-new');
+                  maybeShrimpPopup();
+                }
               }
             } else {
               // Nothing to save — just close
@@ -2829,35 +3426,176 @@ let stbInterval = null;
 let stbRunning = false;
 let stbRemaining = 0;
 
+// ── Fullscreen timer constants ──
+const FST_CIRCUMFERENCE = 2 * Math.PI * 110; // r=110
+let stbPaused = false; // pause state (timer stopped but not reset)
+
 function updateSessionTimerBar() {
   const bar = document.getElementById('session-timer-bar');
   const timeEl = document.getElementById('stb-time');
   const ring = document.getElementById('stb-ring');
   const btn = document.getElementById('stb-btn');
 
-  // Update display time (use remaining if running, else full duration)
-  const displaySec = stbRunning ? stbRemaining : timerDuration;
+  const displaySec = (stbRunning || stbPaused) ? stbRemaining : timerDuration;
   timeEl.textContent = formatTime(displaySec);
 
-  // Ring progress
   const progress = timerDuration > 0 ? displaySec / timerDuration : 1;
   ring.style.strokeDashoffset = STB_CIRCUMFERENCE * (1 - progress);
 
-  // Button state
   if (stbRunning) {
     btn.textContent = '■';
     btn.className = 'stb-btn-stop';
   } else {
     btn.textContent = '▶';
     btn.className = 'stb-btn-play';
-    bar.classList.remove('done');
+    if (!stbPaused) bar.classList.remove('done');
+  }
+
+  updateFullscreenTimer();
+}
+
+function updateFullscreenTimer() {
+  const fstOverlay = document.getElementById('overlay-fullscreen-timer');
+  if (!fstOverlay) return;
+  const displaySec = (stbRunning || stbPaused) ? stbRemaining : timerDuration;
+  document.getElementById('fst-time').textContent = formatTime(displaySec);
+  document.getElementById('fst-total').textContent = `/ ${formatTime(timerDuration)}`;
+  const progress = timerDuration > 0 ? displaySec / timerDuration : 1;
+  document.getElementById('fst-ring-fill').style.strokeDashoffset = FST_CIRCUMFERENCE * (1 - progress);
+
+  const fstBtn = document.getElementById('fst-btn');
+  const fstPause = document.getElementById('fst-pause-btn');
+  const fstLabel = document.getElementById('fst-label');
+
+  if (stbRunning) {
+    fstBtn.textContent = '■'; fstBtn.className = 'stb-btn-stop';
+    fstPause.style.display = 'flex';
+    fstLabel.textContent = 'Repos';
+    fstOverlay.classList.remove('done');
+  } else if (stbPaused) {
+    fstBtn.textContent = '▶'; fstBtn.className = 'stb-btn-play';
+    fstPause.style.display = 'none';
+    fstLabel.textContent = '⏸ En pause';
+  } else {
+    fstBtn.textContent = '▶'; fstBtn.className = 'stb-btn-play';
+    fstPause.style.display = 'none';
+    fstLabel.textContent = 'Repos';
   }
 }
+
+// Pause: freeze timer without resetting
+function togglePause() {
+  if (!stbRunning && !stbPaused) { startStbTimer(); return; }
+  if (stbRunning) {
+    // Pause
+    clearInterval(stbInterval);
+    stbInterval = null;
+    stbRunning = false;
+    stbPaused = true;
+    updateSessionTimerBar();
+  } else if (stbPaused) {
+    // Resume
+    stbPaused = false;
+    stbRunning = true;
+    document.getElementById('session-timer-bar').classList.remove('done');
+    stbInterval = setInterval(() => {
+      stbRemaining--;
+      updateSessionTimerBar();
+      if (stbRemaining <= 0) {
+        clearInterval(stbInterval);
+        stbRunning = false;
+        stbPaused = false;
+        stbInterval = null;
+        document.getElementById('session-timer-bar').classList.add('done');
+        document.getElementById('overlay-fullscreen-timer').classList.add('done');
+        document.getElementById('stb-time').textContent = '0:00';
+        document.getElementById('fst-time').textContent = '0:00';
+        document.getElementById('stb-btn').textContent = '▶'; document.getElementById('stb-btn').className = 'stb-btn-play';
+        document.getElementById('fst-btn').textContent = '▶'; document.getElementById('fst-btn').className = 'stb-btn-play';
+        document.getElementById('fst-pause-btn').style.display = 'none';
+        triggerVibration();
+        setTimeout(() => {
+          document.getElementById('session-timer-bar').classList.remove('done');
+          document.getElementById('overlay-fullscreen-timer').classList.remove('done');
+          updateSessionTimerBar();
+        }, 10000);
+      }
+    }, 1000);
+    updateSessionTimerBar();
+  }
+}
+
+function openFullscreenTimer() {
+  saveDraft();
+  updateFullscreenTimer();
+  const fst = document.getElementById('overlay-fullscreen-timer');
+  fst.classList.add('open');
+  fst.classList.remove('done');
+}
+
+function closeFullscreenTimer() {
+  document.getElementById('overlay-fullscreen-timer').classList.remove('open');
+}
+
+document.getElementById('fst-close-btn').addEventListener('click', closeFullscreenTimer);
+
+document.getElementById('fst-btn').addEventListener('click', () => {
+  if (stbPaused) { togglePause(); return; } // resume from pause
+  if (stbRunning) stopStbTimer();
+  else startStbTimer();
+});
+
+// Swipe down on fullscreen handle to close
+(function initFstSwipe() {
+  const handle = document.getElementById('fst-handle');
+  const overlay = document.getElementById('overlay-fullscreen-timer');
+  let startY = 0, currentY = 0, dragging = false;
+
+  function onStart(e) {
+    startY = e.touches ? e.touches[0].clientY : e.clientY;
+    currentY = startY; dragging = true;
+  }
+  function onMove(e) {
+    if (!dragging) return;
+    currentY = e.touches ? e.touches[0].clientY : e.clientY;
+    const delta = Math.max(0, currentY - startY);
+    overlay.style.transform = `translateY(${delta}px)`;
+    overlay.style.opacity = Math.max(0, 1 - delta / 300);
+    e.preventDefault();
+  }
+  function onEnd() {
+    if (!dragging) return;
+    dragging = false;
+    const delta = currentY - startY;
+    overlay.style.transition = 'transform 0.3s, opacity 0.3s';
+    if (delta > 100) {
+      overlay.style.transform = 'translateY(100%)';
+      overlay.style.opacity = '0';
+      setTimeout(() => {
+        closeFullscreenTimer();
+        overlay.style.transform = '';
+        overlay.style.opacity = '';
+        overlay.style.transition = '';
+      }, 300);
+    } else {
+      overlay.style.transform = '';
+      overlay.style.opacity = '';
+      setTimeout(() => { overlay.style.transition = ''; }, 300);
+    }
+  }
+  handle.addEventListener('touchstart', onStart, { passive: true });
+  handle.addEventListener('touchmove', onMove, { passive: false });
+  handle.addEventListener('touchend', onEnd);
+  handle.addEventListener('mousedown', onStart);
+  document.addEventListener('mousemove', e => { if (dragging) onMove(e); });
+  document.addEventListener('mouseup', onEnd);
+})();
 
 function startStbTimer() {
   if (stbInterval) clearInterval(stbInterval);
   stbRemaining = timerDuration;
   stbRunning = true;
+  stbPaused = false;
   document.getElementById('session-timer-bar').classList.remove('done');
   updateSessionTimerBar();
   stbInterval = setInterval(() => {
@@ -2868,13 +3606,17 @@ function startStbTimer() {
       stbRunning = false;
       stbInterval = null;
       document.getElementById('session-timer-bar').classList.add('done');
+      document.getElementById('overlay-fullscreen-timer').classList.add('done');
       document.getElementById('stb-time').textContent = '0:00';
+      document.getElementById('fst-time').textContent = '0:00';
       document.getElementById('stb-btn').textContent = '▶';
       document.getElementById('stb-btn').className = 'stb-btn-play';
-      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-      // Reset display after 10s (blink handled by CSS animation)
+      document.getElementById('fst-btn').textContent = '▶';
+      document.getElementById('fst-btn').className = 'stb-btn-play';
+      triggerVibration();
       setTimeout(() => {
         document.getElementById('session-timer-bar').classList.remove('done');
+        document.getElementById('overlay-fullscreen-timer').classList.remove('done');
         updateSessionTimerBar();
       }, 10000);
     }
@@ -2885,6 +3627,7 @@ function stopStbTimer() {
   if (stbInterval) clearInterval(stbInterval);
   stbInterval = null;
   stbRunning = false;
+  stbPaused = false;
   updateSessionTimerBar();
 }
 
@@ -2966,6 +3709,7 @@ document.getElementById('fab').style.display = 'flex';
 updateTimerConfigDisplay();
 updateSessionTimerBar();
 syncShrimpToggle();
+syncVibrationUI();
 restoreDraft();
 </script>
 </body>
