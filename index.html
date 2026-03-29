@@ -89,8 +89,8 @@
 
   /* ── STB EXPAND BUTTON ── */
   .stb-expand-btn {
-    width: 36px; height: 36px; border-radius: 50%;
-    border: 1.5px solid var(--border); background: var(--bg2);
+    width: 50px; height: 50px; border-radius: 50%;
+    border: 1.5px solid var(--accent); background: var(--bg2);
     color: var(--text2); font-size: 16px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; transition: color 0.15s, border-color 0.15s;
@@ -120,7 +120,7 @@
   }
   .fst-close-btn {
     width: 50px; height: 50px; border-radius: 50%;
-    border: 1.5px solid var(--border); background: var(--bg2);
+    border: 1.5px solid var(--accent); background: var(--bg2);
     color: var(--text2); font-size: 16px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: color 0.15s, border-color 0.15s;
@@ -154,8 +154,8 @@
   .fst-total { font-size: 12px; color: var(--text3); }
   .fst-controls { display: flex; align-items: center; justify-content: center; gap: 20px; }
   .fst-pause-btn {
-    width: 72px; height: 72px; border-radius: 50%;
-    border: 2px solid var(--border); background: var(--bg2);
+    width: 50px; height: 50px; border-radius: 50%;
+    border: 2px solid var(--accent); background: var(--bg2);
     color: var(--text2); font-size: 26px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: border-color 0.15s, color 0.15s, transform 0.12s;
@@ -208,7 +208,7 @@
   }
   .stb-btn-play:active, .stb-btn-stop:active { transform: scale(0.92); opacity: 0.85; }
   .stb-config-btn {
-    width: 44px; height: 44px; border-radius: 50%;
+    width: 50px; height: 50px; border-radius: 50%;
     border: 2px solid var(--accent); background: var(--accent-tint2);
     color: var(--accent); font-size: 18px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
@@ -1251,7 +1251,7 @@
 
     <!-- Controls: pause + play/stop -->
     <div class="fst-controls">
-      <button class="fst-pause-btn" id="fst-pause-btn" onclick="togglePause()" style="display:none">⏸</button>
+      <button class="fst-pause-btn" id="fst-pause-btn" onclick="togglePause()" style="display:none"><img src="Icone_Pause.png" class="chrono-icon" alt="Pause"></button>
       <button class="stb-btn-play" id="fst-btn" style="width:50px;height:50px;font-size:26px"><img src="Icone_Play.png" class="chrono-icon" alt="Play"></button>
     </div>
 
