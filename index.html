@@ -226,23 +226,38 @@
   #session-timer-bar.done #stb-ring { stroke: #4cff72; }
   #session-timer-bar.done #stb-time { color: #4cff72; }
 
-  .topbar-chrono-btn {
-    background: none; border: none;
-    color: var(--accent); font-size: 22px;
-    cursor: pointer; padding: 6px;
+  /* Bouton emoji générique dans les topbars */
+  .topbar-action-btn {
+    background: none; border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    width: 38px; height: 38px;
+    width: 38px; height: 38px; flex-shrink: 0;
     transition: opacity 0.2s;
   }
-  .topbar-chrono-btn:active { opacity: 0.6; }
-  /* Chrono icon — tint matches accent color via JS-updated filter */
-  .chrono-icon {
-    width: 22px; height: 22px; object-fit: contain; display: block;
-    filter: var(--chrono-icon-filter, brightness(0) invert(1));
+  .topbar-action-btn:active { opacity: 0.6; }
+
+  /* Icône neutre pour les boutons non-chrono (Play, Pause, Add, Fullscreen, Minimized) */
+  .btn-icon {
+    width: 24px; height: 24px; object-fit: contain; display: block;
+    filter: brightness(0) invert(1);
   }
+  /* Icône chronomètre : cercle accent autour, icône blanche centrée */
+  .topbar-chrono-btn {
+    width: 50px; height: 50px; border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px var(--accent-glow2);
+    border: none; cursor: pointer; flex-shrink: 0;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .topbar-chrono-btn:active { opacity: 0.75; transform: scale(0.93); }
+  .chrono-icon {
+    width: 30px; height: 30px; object-fit: contain; display: block;
+    filter: brightness(0) invert(1);
+  }
+  /* Chrono icon dans les petits boutons config (stb-config-btn) */
   .stb-config-btn .chrono-icon,
   #fst-config-btn .chrono-icon {
-    width: 18px; height: 18px;
+    width: 22px; height: 22px;
   }
 
   /* ── TIMER PRESETS ── */
@@ -951,7 +966,7 @@
           </div>
         </div>
       </div>
-      <button id="exo-detail-stats-btn" class="topbar-chrono-btn" title="Voir dans Évolution" style="font-size:18px;flex-shrink:0">📈</button>
+      <button id="exo-detail-stats-btn" class="topbar-action-btn" title="Voir dans Évolution" style="font-size:18px;flex-shrink:0">📈</button>
     </div>
 
     <!-- PR Banner -->
@@ -1231,7 +1246,7 @@
 
     <!-- Top bar -->
     <div class="fst-topbar">
-      <button class="fst-close-btn" id="fst-close-btn" title="Réduire"><img src="Icone_Minimized.png" class="chrono-icon" alt="Minimized"></button>
+      <button class="fst-close-btn" id="fst-close-btn" title="Réduire"><img src="Icone_Minimized.png" class="btn-icon" alt="Minimized"></button>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--text2)">TEMPS DE REPOS</div>
       <button class="stb-config-btn" id="fst-config-btn" onclick="openOverlay('overlay-timer-config')" style="width:38px;height:38px"><img src="Icone_Chrono.png" class="chrono-icon" alt="Chrono"></button>
     </div>
@@ -1251,8 +1266,8 @@
 
     <!-- Controls: pause + play/stop -->
     <div class="fst-controls">
-      <button class="fst-pause-btn" id="fst-pause-btn" onclick="togglePause()" style="display:none"><img src="Icone_Pause.png" class="chrono-icon" alt="Pause"></button>
-      <button class="stb-btn-play" id="fst-btn" style="width:50px;height:50px;font-size:26px"><img src="Icone_Play.png" class="chrono-icon" alt="Play"></button>
+      <button class="fst-pause-btn" id="fst-pause-btn" onclick="togglePause()" style="display:none"><img src="Icone_Pause.png" class="btn-icon" alt="Pause"></button>
+      <button class="stb-btn-play" id="fst-btn" style="width:50px;height:50px;font-size:26px"><img src="Icone_Play.png" class="btn-icon" alt="Play"></button>
     </div>
 
   </div>
@@ -1272,7 +1287,7 @@
   </nav>
 
   <!-- FAB -->
-  <button class="fab" id="fab"><img src="Icone_Add.png" class="chrono-icon" alt="Chrono"></button>
+  <button class="fab" id="fab"><img src="Icone_Add.png" class="btn-icon" alt="Ajouter"></button>
 </div>
 
 <!-- ══ OVERLAY: NEW SESSION ══ -->
@@ -1297,8 +1312,8 @@
           <button id="stb-config-btn" class="stb-config-btn" onclick="openOverlay('overlay-timer-config')"><img src="Icone_Chrono.png" class="chrono-icon" alt="Chrono"></button>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-          <button id="stb-expand-btn" class="stb-expand-btn" onclick="openFullscreenTimer()"><img src="Icone_Fullscreen.png" class="chrono-icon" alt="Fullscreen"></button>
-          <button id="stb-btn" class="stb-btn-play"><img src="Icone_Play.png" class="chrono-icon" alt="Play"></button>
+          <button id="stb-expand-btn" class="stb-expand-btn" onclick="openFullscreenTimer()"><img src="Icone_Fullscreen.png" class="btn-icon" alt="Fullscreen"></button>
+          <button id="stb-btn" class="stb-btn-play"><img src="Icone_Play.png" class="btn-icon" alt="Play"></button>
         </div>
       </div>
     </div>
