@@ -240,6 +240,9 @@
     width: 24px; height: 24px; object-fit: contain; display: block;
     filter: brightness(0) invert(1);
   }
+  /* Mode clair : icônes noires sur fond clair */
+  body.light .btn-icon { filter: brightness(0); }
+
   /* Icône chronomètre : cercle accent autour, icône blanche centrée */
   .topbar-chrono-btn {
     width: 50px; height: 50px; border-radius: 50%;
@@ -254,6 +257,8 @@
     width: 30px; height: 30px; object-fit: contain; display: block;
     filter: brightness(0) invert(1);
   }
+  /* Mode clair : icône chrono noire (fond accent clair = jaune) */
+  body.light .chrono-icon { filter: brightness(0); }
   /* Chrono icon dans les petits boutons config (stb-config-btn) */
   .stb-config-btn .chrono-icon,
   #fst-config-btn .chrono-icon {
@@ -2735,27 +2740,6 @@ function closeOverlay(id) { document.getElementById(id).classList.remove('open')
 // ══════════════════════════════════
 // OPTIONS & DISPLAY
 // ══════════════════════════════════
-// Convert RGB to CSS filter that tints a white icon to that color
-function computeIconFilter(r, g, b) {
-  // Normalize
-  r /= 255; g /= 255; b /= 255;
-  const max = Math.max(r,g,b), min = Math.min(r,g,b);
-  let h = 0, s = 0, l = (max + min) / 2;
-  if (max !== min) {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-      case g: h = ((b - r) / d + 2) / 6; break;
-      case b: h = ((r - g) / d + 4) / 6; break;
-    }
-  }
-  const hDeg = Math.round(h * 360);
-  const sat  = Math.round(s * 100);
-  const light = Math.round(l * 100);
-  // Start from black (brightness(0)), invert to white, then rotate hue and adjust
-  return `brightness(0) invert(1) sepia(1) saturate(${sat * 3}%) hue-rotate(${hDeg - 30}deg) brightness(${light > 50 ? 1.2 : 0.9})`;
-}
 
 const ACCENT_COLORS = {
   default: { hex: '#e8ff3c', hexLight: '#E6FC0F', r:232, g:255, b:60  },
@@ -2786,8 +2770,6 @@ function applyAccent(key) {
   document.documentElement.dataset.accentR = c.r;
   document.documentElement.dataset.accentG = c.g;
   document.documentElement.dataset.accentB = c.b;
-  // Update chrono icon tint filter to match accent color
-  r.style.setProperty('--chrono-icon-filter', computeIconFilter(c.r, c.g, c.b));
 }
 
 function setTheme(mode) {
