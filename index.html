@@ -463,11 +463,10 @@
   }
   .topbar-options-btn {
     background: none; border: none; border-radius: 8px;
-    color: var(--accent);
-    cursor: pointer; padding: 6px 12px;
-    transition: opacity 0.2s; line-height: 1;
+    cursor: pointer; padding: 6px;
+    transition: opacity 0.2s;
     display: flex; align-items: center; justify-content: center;
-    width: 56px; height: 38px; font-size: 22px;
+    width: 38px; height: 38px;
   }
   .topbar-options-btn:active { opacity: 0.6; }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -832,7 +831,7 @@
       </div>
       <div style="display:flex;align-items:center;gap:10px">
         <button class="topbar-chrono-btn" id="btn-open-timer" onclick="showScreen('timer')"><img src="Icone_Chrono.png" class="chrono-icon" alt="Chrono"></button>
-        <button class="topbar-options-btn" onclick="showScreen('options')">⚙️</button>
+        <button class="topbar-options-btn" onclick="showScreen('options')"><img src="Icone_Option.png" class="btn-icon" alt="Options"></button>
       </div>
     </div>
     <!-- Draft restore banner — shown above all sessions -->
@@ -854,7 +853,7 @@
         <div class="topbar-title">CALENDRIER</div>
         <div class="topbar-sub">Historique des entraînements</div>
       </div>
-      <button class="topbar-options-btn" onclick="showScreen('options')">⚙️</button>
+      <button class="topbar-options-btn" onclick="showScreen('options')"><img src="Icone_Option.png" class="btn-icon" alt="Options"></button>
     </div>
     <div class="calendar-wrap">
       <div class="cal-header">
@@ -873,7 +872,7 @@
         <div class="topbar-title">ÉVOLUTION</div>
         <div class="topbar-sub">Progression par exercice</div>
       </div>
-      <button class="topbar-options-btn" onclick="showScreen('options')"><img src="Icone_Option.png" alt="Option"></button>
+      <button class="topbar-options-btn" onclick="showScreen('options')"><img src="Icone_Option.png" class="btn-icon" alt="Options"></button>
     </div>
     <div class="stats-wrap">
       <div class="stats-controls">
