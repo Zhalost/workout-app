@@ -507,15 +507,15 @@
   .nav-btn {
     display: flex; flex-direction: column; align-items: center; gap: 3px;
     background: none; border: none; cursor: pointer;
-    padding: 6px 20px; color: var(--text3);
+    padding: 6px 15px; color: var(--text3);
     font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500;
     transition: color 0.2s;
   }
   .nav-btn.active { color: var(--accent); }
-  
+  .nav-btn.border { border:1px color: var(--accent); }
   .nav-icon { 
   font-size: 10px; 
-  line-height: 1;
+  line-height: 2;
   width: 10px;      /* Ajustez cette valeur */
   height: 10px;     /* Ajustez cette valeur */
   filter: brightness(0) invert(1);
