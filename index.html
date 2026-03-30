@@ -497,7 +497,7 @@
   /* ── BOTTOM NAV ── */
   .bottom-nav {
     position: fixed; bottom: 0; left: 0; right: 0;
-    height: calc(40px + var(--safe-bottom));
+    height: calc(60px + var(--safe-bottom));
     background: var(--bg2);
     border-top: 1px solid var(--border);
     display: flex; align-items: flex-start; justify-content: space-around;
@@ -512,7 +512,8 @@
     transition: color 0.2s;
   }
   .nav-btn.active { color: var(--accent); }
-  .nav-icon { font-size: 20px; line-height: 1; }
+  
+  .nav-icon { font-size: 16px; line-height: 1; }
 
   /* ── FAB ── */
   .fab {
@@ -1618,7 +1619,14 @@ function showScreen(id) {
   if (isMain) {
     document.querySelector(`.nav-btn[data-screen="${id}"]`).classList.add('active');
   }
-
+  if (screenId === 'home') {
+    document.querySelector('[data-screen="home"]').classList.add('active');
+  } else if (screenId === 'cal') {
+    document.querySelector('[data-screen="cal"]').classList.add('active');
+  } else if (screenId === 'stats') {
+    document.querySelector('[data-screen="stats"]').classList.add('active');
+  }
+}
   if (id === 'cal') renderCalendar();
   if (id === 'stats') renderStats();
   if (id === 'display') syncDisplayUI();
