@@ -1619,14 +1619,7 @@ function showScreen(id) {
   if (isMain) {
     document.querySelector(`.nav-btn[data-screen="${id}"]`).classList.add('active');
   }
-  if (screenId === 'home') {
-    document.querySelector('[data-screen="home"]').classList.add('active');
-  } else if (screenId === 'cal') {
-    document.querySelector('[data-screen="cal"]').classList.add('active');
-  } else if (screenId === 'stats') {
-    document.querySelector('[data-screen="stats"]').classList.add('active');
-  }
-}
+ 
   if (id === 'cal') renderCalendar();
   if (id === 'stats') renderStats();
   if (id === 'display') syncDisplayUI();
