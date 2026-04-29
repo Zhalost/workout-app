@@ -1016,7 +1016,7 @@
         <span class="options-row-arrow">›</span>
       </div>
     </div>
-    <div style="position:absolute;bottom:calc(20px + var(--safe-bottom));left:0;right:0;text-align:center;font-size:11px;color:var(--text3);letter-spacing:0.5px;">Version 1.5</div>
+    <div style="position:absolute;bottom:calc(20px + var(--safe-bottom));left:0;right:0;text-align:center;font-size:11px;color:var(--text3);letter-spacing:0.5px;">Version 1.4</div>
   </div>
 
   <!-- ══ SCREEN: EXERCISES LIST ══ -->
@@ -1947,7 +1947,7 @@ function renderNewExoList() {
     groups[seen[e.name]].sets.push({ ...e, idx });
   });
   list.innerHTML = groups.map(g => {
-    const setsHtml = g.sets.map((s,i) => `<div class="exo-item-set-row">S${i+1}: <strong>${s.reps} reps</strong>${s.weight ? ` @ <strong>${s.weight}kg</strong>` : ''}${s.comment ? `<div class="set-comment">${s.comment}</div>` : ''}</div>`).join('');
+    const setsHtml = g.sets.map((s,i) => `<div class="exo-item-set-row">${TRANSLATIONS[currentLang].serie_label(i+1)}: <strong>${s.reps} ${TRANSLATIONS[currentLang].reps}</strong>${s.weight ? ` @ <strong>${s.weight}kg</strong>` : ''}${s.comment ? `<div class="set-comment">${s.comment}</div>` : ''}</div>`).join('');
     const safeName = g.name.replace(/'/g, "\\'");
     return `<div class="exo-item">
       <div class="exo-item-header">
@@ -2131,10 +2131,10 @@ function openDetailForDate(date) {
     const exos = grouped[name];
     const maxWeight = Math.max(...exos.map(e => e.weight || 0));
     const maxReps = Math.max(...exos.map(e => e.reps || 0));
-    const maxLabel = maxWeight > 0 ? `${maxWeight} kg max` : `${maxReps} reps max`;
+    const maxLabel = maxWeight > 0 ? `${maxWeight} ${TRANSLATIONS[currentLang].kg_max}` : `${maxReps} ${TRANSLATIONS[currentLang].reps_max_court}`;
     const sets = exos.map((e, i) => `
       <div class="set-badge" style="display:flex;flex-direction:column;gap:2px">
-        <div>Série ${i+1}: <strong>${e.reps} reps</strong>${e.weight ? ` @ <strong>${e.weight}kg</strong>` : ''}</div>
+        <div>${TRANSLATIONS[currentLang].serie_label(i+1)}: <strong>${e.reps} ${TRANSLATIONS[currentLang].reps}</strong>${e.weight ? ` @ <strong>${e.weight}kg</strong>` : ''}</div>
         ${e.comment ? `<div style="font-style:italic;color:var(--text3);font-size:11px">${e.comment}</div>` : ''}
       </div>`).join('');
     html += `
@@ -2514,8 +2514,7 @@ function shareChart() {
       if (w > prBestWeight || (w === prBestWeight && r > prBestReps)) { prBestWeight = w; prBestReps = r; }
     });
   });
-  const prText = prBestWeight > 0 ? `P.R. actuel : ${prBestWeight}kg × ${prBestReps} reps`
-               : prBestReps > 0  ? `P.R. actuel : ${prBestReps} reps` : '';
+  const prText = TRANSLATIONS[currentLang].pr_share(prBestWeight, prBestReps);
 
   // Colors
   const accentHex = document.documentElement.dataset.accentHex || '#e8ff3c';
@@ -2745,6 +2744,9 @@ const TRANSLATIONS = {
     charge_max: 'Charge max (kg)', reps_max: 'Reps max',
     exo_detail_series: n => `${n} série${n > 1 ? 's' : ''}`,
     sans_titre: 'sans titre',
+    reps: 'reps', kg_max: 'kg max', reps_max_court: 'reps max',
+    serie_label: i => `Série ${i}`,
+    pr_exo: (w, r) => w > 0 ? `${w}kg × ${r} reps` : `${r} reps max`,
   },
   en: {
     OPTIONS: 'OPTIONS', ACCUEIL: 'HOME', CALENDRIER: 'CALENDAR',
@@ -2794,6 +2796,9 @@ const TRANSLATIONS = {
     charge_max: 'Max weight (kg)', reps_max: 'Max reps',
     exo_detail_series: n => `${n} set${n > 1 ? 's' : ''}`,
     sans_titre: 'untitled',
+    reps: 'reps', kg_max: 'kg max', reps_max_court: 'reps max',
+    serie_label: i => `Set ${i}`,
+    pr_exo: (w, r) => w > 0 ? `${w}kg × ${r} reps` : `${r} reps max`,
   }
 };
 
@@ -3126,38 +3131,37 @@ function encodeExportData() {
       if (e.comment) parts.push(e.comment);
       return parts.join('~');
     }).join(';');
-    return `${header}>${exoParts}`;
+    return `${header}|X:${exoParts}`;
   });
   return lines.join('\n');
 }
 
 // ── Decode & validate import ──
 function decodeImportData(raw) {
-  // Strip anything that looks like script/html injection
-  // Only allow printable chars, accented letters, newlines, common symbols
-  const sanitized = raw.replace(/<[^>]*>/g, '').replace(/[^\x20-\x7E\xA0-\xFF\n]/g, '').trim();
-  
+  // Normalize line endings, strip HTML tags safely without touching data
+  const sanitized = raw
+    .replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+    .replace(/<[^>]*>/g, ' ')
+    .trim();
+
   const lines = sanitized.split('\n').map(l => l.trim()).filter(l => l.startsWith('D:'));
   if (!lines.length) return { error: 'Aucune donnée valide trouvée dans ce code.' };
 
   const imported = [];
   for (const line of lines) {
-    // Split header from exercises
-    const gtIdx = line.indexOf('>');
-    if (gtIdx === -1) continue;
-    const headerPart = line.slice(0, gtIdx);
-    const exoPart = line.slice(gtIdx + 1);
+    // Parse fields separated by |
+    const fields = line.split('|');
+    const dateField = fields.find(f => f.startsWith('D:'));
+    const nameField = fields.find(f => f.startsWith('N:'));
+    const exoField  = fields.find(f => f.startsWith('X:'));
 
-    // Parse header
-    const headerFields = headerPart.split('|');
-    const dateField = headerFields.find(f => f.startsWith('D:'));
-    const nameField = headerFields.find(f => f.startsWith('N:'));
-    if (!dateField) continue;
+    if (!dateField || !exoField) continue;
 
     const date = dateField.slice(2).trim();
-    // Validate date format strictly: YYYY-MM-DD
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
     const name = nameField ? nameField.slice(2).trim().slice(0, 100) : '';
+    const exoPart = exoField.slice(2);
 
     // Parse exercises — each field is name~reps~kg[~comment]
     const exercises = [];
@@ -3165,8 +3169,8 @@ function decodeImportData(raw) {
       const parts = exoStr.split('~');
       if (parts.length < 2) continue;
       const exoName = parts[0].trim().slice(0, 100);
-      const reps = Math.max(0, Math.min(9999, parseInt(parts[1]) || 0));
-      const weight = Math.max(0, Math.min(9999, parseFloat(parts[2]) || 0));
+      const reps    = Math.max(0, Math.min(9999, parseInt(parts[1]) || 0));
+      const weight  = Math.max(0, Math.min(9999, parseFloat(parts[2]) || 0));
       const comment = parts[3] ? parts[3].trim().slice(0, 300) : '';
       if (!exoName) continue;
       exercises.push({ name: exoName, sets: 1, reps, weight, comment });
@@ -3426,7 +3430,7 @@ function renderExercisesList() {
       lastLetter = letter;
     }
     const d = exoMap[name];
-    const pr = d.bestWeight > 0 ? `${d.bestWeight}kg × ${d.bestReps} reps` : `${d.bestReps} reps max`;
+    const pr = TRANSLATIONS[currentLang].pr_exo(d.bestWeight, d.bestReps);
     html += `
       <div class="exo-list-row" onclick="openExerciseDetail('${name.replace(/'/g, "\\'")}')">
         <div>
@@ -3468,7 +3472,7 @@ function openExerciseDetail(name) {
   const prText = document.getElementById('exo-detail-pr-text');
   if (bestReps > 0) {
     prBanner.style.display = 'block';
-    prText.textContent = bestWeight > 0 ? `${bestWeight} kg à ${bestReps} reps` : `${bestReps} reps`;
+    prText.textContent = TRANSLATIONS[currentLang].pr_actuel(bestWeight, bestReps);
   } else {
     prBanner.style.display = 'none';
   }
@@ -3481,7 +3485,7 @@ function openExerciseDetail(name) {
     histEl.innerHTML = history.map(h => {
       const d = new Date(h.date + 'T12:00:00');
       const dateStr = d.toLocaleDateString(getLocale(), { weekday:'short', day:'numeric', month:'short', year:'numeric' });
-      const setsSummary = h.sets.map((e, i) => `<span style="font-size:12px;color:var(--text2)">S${i+1}: ${e.reps} reps${e.weight ? ` @ ${e.weight}kg` : ''}</span>`).join(' &nbsp;·&nbsp; ');
+      const setsSummary = h.sets.map((e, i) => `<span style="font-size:12px;color:var(--text2)">${TRANSLATIONS[currentLang].serie_label(i+1)}: ${e.reps} ${TRANSLATIONS[currentLang].reps}${e.weight ? ` @ ${e.weight}kg` : ''}</span>`).join(' &nbsp;·&nbsp; ');
       return `
         <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px">
           <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:6px">${dateStr}</div>
